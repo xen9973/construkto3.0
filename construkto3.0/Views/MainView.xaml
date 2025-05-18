@@ -1,0 +1,291 @@
+﻿<Window x:Class="construkto3._0.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:construkto3._0.ViewModels"
+        xmlns:local="clr-namespace:construkto3._0.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Height="800" Width="1883"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStyle="ToolWindow">
+
+    <Window.Resources>
+        <!-- Стиль для анимированных кнопок с использованием WPF анимаций -->
+        <Style x:Key="AnimatedButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Setter Property="Margin" Value="0,8"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Style.Triggers>
+                <!-- Анимация при наведении мыши -->
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
+                                            To="1.05" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
+                                            To="1.05" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <!-- Анимация при уходе мыши -->
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
+                                            To="1" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
+                                            To="1" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для DataGrid -->
+        <Style x:Key="ModernDataGrid" TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RowBackground" Value="Transparent"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource MaterialDesignLightBackground}"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+        </Style>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок и кнопка смены темы -->
+        <materialDesign:Card Grid.Row="0" Padding="10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <!-- Для заголовка -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Для кнопки -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Заголовок -->
+                <TextBlock Grid.Column="0"
+                       Text="Конструктор Коммерческих Предложений"
+                       FontSize="24" FontWeight="Bold"
+                       Foreground="{DynamicResource MaterialDesignBody}"
+                       VerticalAlignment="Center"/>
+
+                <!-- Кнопка смены темы -->
+                <Button Grid.Column="1"
+                    Click="ToggleTheme_Click"
+                    Style="{StaticResource AnimatedButton}"
+                    materialDesign:ButtonAssist.CornerRadius="10"
+                    Width="60" Height="30"
+                    Margin="10,0,0,0">
+                    <materialDesign:PackIcon Kind="ThemeLightDark" Width="20" Height="20"/>
+                </Button>
+            </Grid>
+        </materialDesign:Card>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="443*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="443*"/>
+                <ColumnDefinition Width="229*"/>
+                <ColumnDefinition Width="657*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Левый DataGrid (Доступные товары) -->
+            <materialDesign:Card Grid.Column="0" Margin="0,0,10,0" Padding="10">
+                <DataGrid ItemsSource="{Binding AvailableItems}"
+                          SelectedItem="{Binding SelectedAvailable}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          Style="{StaticResource ModernDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Наименование" 
+                                           Binding="{Binding Name}" 
+                                           Width="*"
+                                           FontSize="14"/>
+                        <DataGridTextColumn Header="Категория" 
+                                           Binding="{Binding Category}" 
+                                           Width="*"
+                                           FontSize="14"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+
+            <!-- Кнопки Добавить/Удалить -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,10,0" Height="112">
+                <Button Command="{Binding AddCommand}"
+                        Style="{StaticResource AnimatedButton}"
+                        materialDesign:ButtonAssist.CornerRadius="20">
+                    <materialDesign:PackIcon Kind="ArrowRight" Width="20" Height="20"/>
+                </Button>
+                <Button Command="{Binding RemoveCommand}"
+                        Style="{StaticResource AnimatedButton}"
+                        materialDesign:ButtonAssist.CornerRadius="20">
+                    <materialDesign:PackIcon Kind="ArrowLeft" Width="20" Height="20"/>
+                </Button>
+            </StackPanel>
+
+            <!-- Правый DataGrid (Выбранные товары) -->
+            <materialDesign:Card Grid.Column="2" Margin="10,0,10,0" Padding="10">
+                <DataGrid ItemsSource="{Binding SelectedItems}"
+                          SelectedItem="{Binding SelectedChosen}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          Style="{StaticResource ModernDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Наименование" 
+                                           Binding="{Binding Name}" 
+                                           Width="*"
+                                           FontSize="14"/>
+                        <DataGridTextColumn Header="Категория" 
+                                           Binding="{Binding Category}" 
+                                           Width="*"
+                                           FontSize="14"/>
+                        <DataGridTextColumn Header="Цена" 
+                                           Binding="{Binding UnitPrice, StringFormat=N2}" 
+                                           Width="*"
+                                           FontSize="14"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+
+            <!-- Панель управления -->
+            <materialDesign:Card Grid.Column="3" Margin="10,0,10,0" Padding="15">
+                <StackPanel>
+                    <ComboBox ItemsSource="{Binding Counterparties}" 
+                              DisplayMemberPath="Name"
+                              SelectedItem="{Binding SelectedCounterparty}" 
+                              Style="{StaticResource MaterialDesignComboBox}"
+                              Foreground="{DynamicResource MaterialDesignBody}"
+                              Margin="0,0,0,10"
+                              materialDesign:HintAssist.Hint="Выберите контрагента"
+                              materialDesign:HintAssist.Foreground="{DynamicResource MaterialDesignBody}"/>
+                    <Button Content="Добавить контрагента" 
+                            Click="Button_Click"
+                            Style="{StaticResource AnimatedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="10"/>
+                    <Button Content="Создать КП" 
+                            Command="{Binding GenerateCommand}"
+                            Style="{StaticResource AnimatedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="10"/>
+                    <Button Content="Сохранить в RTF" 
+                            Command="{Binding SaveCommand}" 
+                            CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
+                            Style="{StaticResource AnimatedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="10"/>
+                    <Label x:Name="SelectedTemplateLabel1" 
+                            Content="Выбранный шаблон:" 
+                            Foreground="{DynamicResource MaterialDesignBody}"
+                            Margin="0,5,0,5"/>
+                    <Label x:Name="SelectedTemplateLabel" 
+                            Content="Шаблон не выбран" 
+                            Foreground="{DynamicResource MaterialDesignBody}"
+                           Margin="0,5,0,5"/>
+                    <Button Content="Выбрать шаблон" 
+                            Click="SelectTemplate_Click"
+                            Style="{StaticResource AnimatedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="10"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Предпросмотр предложения с панелью инструментов -->
+            <materialDesign:Card Grid.Column="4" Margin="10,0,0,0" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Панель инструментов -->
+                        <RowDefinition Height="*"/>
+                        <!-- RichTextBox -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Панель инструментов для редактирования -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <!-- Выбор шрифта -->
+                        <ComboBox x:Name="FontComboBox" 
+                                  Width="150" 
+                                  Margin="0,0,10,0" 
+                                  SelectionChanged="FontComboBox_SelectionChanged"
+                                  Style="{StaticResource MaterialDesignComboBox}"
+                                  Foreground="{DynamicResource MaterialDesignBody}">
+                            <ComboBoxItem>Times New Roman</ComboBoxItem>
+                            <ComboBoxItem>Arial</ComboBoxItem>
+                            <ComboBoxItem>Verdana</ComboBoxItem>
+                            <ComboBoxItem>Courier New</ComboBoxItem>
+                        </ComboBox>
+
+                        <!-- Кнопки выравнивания -->
+                        <Button CommandParameter="Left" 
+                                Click="AlignButton_Click" 
+                                Style="{StaticResource AnimatedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10">
+                            <materialDesign:PackIcon Kind="FormatAlignLeft" Width="20" Height="20"/>
+                        </Button>
+                        <Button CommandParameter="Center" 
+                                Click="AlignButton_Click" 
+                                Style="{StaticResource AnimatedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10">
+                            <materialDesign:PackIcon Kind="FormatAlignCenter" Width="20" Height="20"/>
+                        </Button>
+                        <Button CommandParameter="Right" 
+                                Click="AlignButton_Click" 
+                                Style="{StaticResource AnimatedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10">
+                            <materialDesign:PackIcon Kind="FormatAlignRight" Width="20" Height="20"/>
+                        </Button>
+
+                        <!-- Кнопка для жирного текста -->
+                        <Button Click="BoldButton_Click" 
+                                Style="{StaticResource AnimatedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10">
+                            <materialDesign:PackIcon Kind="FormatBold" Width="20" Height="20"/>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- RichTextBox -->
+                    <RichTextBox Grid.Row="1" 
+                                 x:Name="RichTextBoxEditor"
+                                 VerticalScrollBarVisibility="Auto"
+                                 IsReadOnly="True"
+                                 FontSize="14"
+                                 Background="Transparent"
+                                 Foreground="{DynamicResource MaterialDesignBody}"
+                                 BorderThickness="0"
+                                 Opacity="0">
+                        <RichTextBox.Triggers>
+                            <!-- Анимация появления при загрузке -->
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                        From="0" To="1" Duration="0:0:0.3"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </RichTextBox.Triggers>
+                        <FlowDocument>
+                            <Paragraph>
+                                <Run Text="{Binding GeneratedText}"/>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </Grid>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
+</Window>
