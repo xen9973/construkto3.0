@@ -60,7 +60,7 @@
     </Window.Resources>
 
     <Window.DataContext>
-        <vm:MainViewModel />
+        <vm:MainViewModel/>
     </Window.DataContext>
 
     <Grid Margin="20">
