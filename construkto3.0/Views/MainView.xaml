@@ -65,8 +65,8 @@
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" MinHeight="61.923"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <!-- Заголовок и кнопка смены темы -->
@@ -109,7 +109,9 @@
 
             <!-- Левый DataGrid (Доступные товары) -->
             <materialDesign:Card Grid.Column="0" Margin="0,0,10,0" Padding="10">
-                <DataGrid ItemsSource="{Binding AvailableItems}"
+                <TabControl Style="{StaticResource MaterialDesignTabControl}">
+                    <TabItem Header="БД программы">
+                        <DataGrid ItemsSource="{Binding AvailableItems}"
                           SelectedItem="{Binding SelectedAvailable}"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
@@ -124,7 +126,28 @@
                                            Width="*"
                                            FontSize="14"/>
                     </DataGrid.Columns>
-                </DataGrid>
+                    </DataGrid>
+                    </TabItem>
+
+                    <TabItem Header="Бд с Excel">
+                        <DataGrid 
+                            SelectedItem="{Binding SelectedAvailable}"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            Style="{StaticResource ModernDataGrid}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Наименование" 
+                                        Binding="{Binding Name}" 
+                                        Width="*"
+                                        FontSize="14"/>
+                                <DataGridTextColumn Header="Категория" 
+                                        Binding="{Binding Category}" 
+                                        Width="*"
+                                        FontSize="14"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
             </materialDesign:Card>
 
             <!-- Кнопки Добавить/Удалить -->
