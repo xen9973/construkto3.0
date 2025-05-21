@@ -138,7 +138,8 @@
                                           SelectedItem="{Binding SelectedAvailableCategory}"
                                           Style="{StaticResource MaterialDesignComboBox}"
                                           Width="408" Margin="2,2,0,2"
-                                          materialDesign:HintAssist.Hint="Выберите Категорию"/>
+                                          materialDesign:HintAssist.Hint="Выберите Категорию"
+                                          Foreground="{DynamicResource MaterialDesignBody}"/>
                             </StackPanel>
                             <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredAvailableItems}"
                                 SelectedItem="{Binding SelectedAvailable}"
