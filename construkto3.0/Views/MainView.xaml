@@ -111,24 +111,38 @@
             <materialDesign:Card Grid.Column="0" Margin="0,0,10,0" Padding="10">
                 <TabControl Style="{StaticResource MaterialDesignTabControl}">
                     <TabItem Header="БД программы">
-                        <DataGrid ItemsSource="{Binding AvailableItems}"
-                          SelectedItem="{Binding SelectedAvailable}"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="False"
-                          Style="{StaticResource ModernDataGrid}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Наименование" 
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <ComboBox ItemsSource="{Binding AvailableCategories}"
+                                          SelectedItem="{Binding SelectedAvailableCategory}"
+                                          Style="{StaticResource MaterialDesignComboBox}"
+                                          Width="408" Margin="2,2,0,2"
+                                          materialDesign:HintAssist.Hint="Выберите Категорию"/>
+                            </StackPanel>
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredAvailableItems}"
+                                SelectedItem="{Binding SelectedAvailable}"
+                                AutoGenerateColumns="False"
+                                CanUserAddRows="False"
+                                Style="{StaticResource ModernDataGrid}"
+                                IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Наименование" 
                                            Binding="{Binding Name}" 
                                            Width="*"
                                            FontSize="14"/>
-                        <DataGridTextColumn Header="Категория" 
+                                <DataGridTextColumn Header="Категория" 
                                            Binding="{Binding Category}" 
                                            Width="*"
                                            FontSize="14"/>
-                    </DataGrid.Columns>
-                    </DataGrid>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
                     </TabItem>
-
+                    
                     <TabItem Header="Бд с Excel">
                         <DataGrid 
                             SelectedItem="{Binding SelectedAvailable}"

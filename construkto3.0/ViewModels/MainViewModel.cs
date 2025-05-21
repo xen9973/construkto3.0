@@ -12,7 +12,20 @@ namespace construkto3._0.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public ObservableCollection<Item> AvailableItems { get; }
+        private ObservableCollection<Item> _availableItems;
+        public ObservableCollection<Item> AvailableItems
+        {
+            get => _availableItems;
+            set => SetProperty(ref _availableItems, value);
+        }
+
+        private ObservableCollection<Item> _filteredAvailableItems = new ObservableCollection<Item>();
+        public ObservableCollection<Item> FilteredAvailableItems
+        {
+            get => _filteredAvailableItems;
+            set => SetProperty(ref _filteredAvailableItems, value);
+        }
+
         public ObservableCollection<Item> SelectedItems { get; }
         public ObservableCollection<Counterparty> Counterparties { get; }
 
@@ -44,6 +57,26 @@ namespace construkto3._0.ViewModels
             set => SetProperty(ref _generatedText, value);
         }
 
+        private ObservableCollection<string> _availableCategories = new ObservableCollection<string>();
+        public ObservableCollection<string> AvailableCategories
+        {
+            get => _availableCategories;
+            set => SetProperty(ref _availableCategories, value);
+        }
+
+        private string _selectedAvailableCategory;
+        public string SelectedAvailableCategory
+        {
+            get => _selectedAvailableCategory;
+            set
+            {
+                SetProperty(ref _selectedAvailableCategory, value);
+                ApplyAvailableItemsFilter();
+            }
+        }
+
+    
+
         public ICommand GenerateCommand { get; }
         public ICommand AddCommand { get; }
         public ICommand RemoveCommand { get; }
@@ -51,14 +84,43 @@ namespace construkto3._0.ViewModels
 
         public MainViewModel()
         {
-            AvailableItems = new ObservableCollection<Item>(DatabaseService.LoadItems());
+            // Загружаем данные из DatabaseService
+            AvailableItems = new ObservableCollection<Item>(DatabaseService.LoadItems() ?? new List<Item>());
             SelectedItems = new ObservableCollection<Item>();
-            Counterparties = new ObservableCollection<Counterparty>(DatabaseService.LoadCounterparties());
+            Counterparties = new ObservableCollection<Counterparty>(DatabaseService.LoadCounterparties() ?? new List<Counterparty>());
+
+            // Инициализация категорий
+            AvailableCategories = new ObservableCollection<string>(AvailableItems.Any() ? AvailableItems.Select(item => item.Category).Distinct() : new List<string>());
+            AvailableCategories.Insert(0, "Все категории");
+            SelectedAvailableCategory = "Все категории";
+
+            // Инициализация отфильтрованных данных
+            FilteredAvailableItems = new ObservableCollection<Item>(AvailableItems);
+
 
             GenerateCommand = new RelayCommand(_ => GenerateProposal(), _ => SelectedCounterparty != null && SelectedItems.Any());
             AddCommand = new RelayCommand(_ => AddSelectedItem(), _ => SelectedAvailable != null);
             RemoveCommand = new RelayCommand(_ => RemoveSelectedItem(), _ => SelectedChosen != null);
             SaveCommand = new RelayCommand(_ => SaveToRtf(), _ => !string.IsNullOrWhiteSpace(GeneratedText));
+
+            // Применяем фильтр сразу после загрузки
+            ApplyAvailableItemsFilter();
+        }
+
+        private void ApplyAvailableItemsFilter()
+        {
+            FilteredAvailableItems.Clear();
+            if (AvailableItems == null || !AvailableItems.Any())
+            {
+                return; // Ничего не делаем, если данные отсутствуют
+            }
+
+            var filtered = AvailableItems
+                .Where(item => (SelectedAvailableCategory == "Все категории" || item.Category == SelectedAvailableCategory));
+            foreach (var item in filtered)
+            {
+                FilteredAvailableItems.Add(item);
+            }
         }
 
         private void SaveToRtf()
@@ -74,7 +136,6 @@ namespace construkto3._0.ViewModels
                 using (var fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
                 {
                     var flowDocument = new FlowDocument();
-                    // Разделяем текст на строки и создаём отдельный Paragraph для каждой строки
                     var lines = GeneratedText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (var line in lines)
                     {
@@ -92,11 +153,12 @@ namespace construkto3._0.ViewModels
         {
             if (SelectedAvailable != null)
             {
-                var item = SelectedAvailable;
-                AvailableItems.Remove(item);
-                item.Quantity = 1; // устанавливаем количество по умолчанию
+                var item = SelectedAvailable.Clone() as Item;
+                item.Quantity = 1;
+                AvailableItems.Remove(SelectedAvailable);
                 SelectedItems.Add(item);
                 SelectedAvailable = null;
+                ApplyAvailableItemsFilter();
             }
         }
 
@@ -108,6 +170,7 @@ namespace construkto3._0.ViewModels
                 SelectedItems.Remove(item);
                 AvailableItems.Add(item);
                 SelectedChosen = null;
+                ApplyAvailableItemsFilter();
             }
         }
 
@@ -135,7 +198,6 @@ namespace construkto3._0.ViewModels
                 return;
             }
 
-            // Генерация текста для RichTextBox
             var sb = new StringBuilder();
             sb.AppendLine($"Коммерческое предложение № 001");
             sb.AppendLine($"от {DateTime.Now:dd.MM.yyyy}\n");
@@ -188,7 +250,6 @@ namespace construkto3._0.ViewModels
             sb.AppendLine("(ФИО, Должность)         (ФИО, Должность)");
             sb.AppendLine("М.П.");
 
-            // Привязка к RichTextBox
             GeneratedText = sb.ToString();
         }
     }
