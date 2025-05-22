@@ -142,10 +142,17 @@
                                           Foreground="{DynamicResource MaterialDesignBody}"/>
                                 <Button Click="NewData_Click"
                                         Style="{StaticResource AnimatedButton}"
-                                        Width="200"
+                                        Width="140"
                                         Height="25"
                                         Margin="10,2,0,2">
                                     <materialDesign:PackIcon Kind="AddBold" Height="17" />
+                                </Button>
+                                <Button Click="info_Click"
+                                         Style="{StaticResource AnimatedButton}"
+                                         Width="50"
+                                         Height="25"
+                                         Margin="10,2,0,2">
+                                    <materialDesign:PackIcon Kind="InfoCircle"  />
                                 </Button>
 
                             </StackPanel>
@@ -176,18 +183,23 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                                <ComboBox ItemsSource="{Binding AvailableCategories}"
-                                        SelectedItem="{Binding SelectedAvailableCategory}"
-                                        Style="{StaticResource MaterialDesignComboBox}"
+                                <ComboBox 
                                         Width="195" Margin="2,2,0,2"
                                         materialDesign:HintAssist.Hint="Выберите Категорию"
                                         Foreground="{DynamicResource MaterialDesignBody}"/>
                                 <Button Click="NewData_Click"
                                         Style="{StaticResource AnimatedButton}"
-                                        Width="200"
+                                        Width="140"
                                         Height="25"
                                         Margin="10,2,0,2">
                                     <materialDesign:PackIcon Kind="AddBold" Height="17" />
+                                </Button>
+                                <Button Click="infoExcel_Click"
+                                        Style="{StaticResource AnimatedButton}"
+                                        Width="50"
+                                        Height="25"
+                                        Margin="10,2,0,2">
+                                    <materialDesign:PackIcon Kind="InfoCircle"  />
                                 </Button>
                             </StackPanel>
                                 <DataGrid Grid.Row="1"

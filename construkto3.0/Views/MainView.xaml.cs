@@ -171,6 +171,21 @@ namespace construkto3._0.Views
         {
             this.WindowState = WindowState.Minimized;
         }
+
+        private void NewData_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void infoExcel_Click(object sender, RoutedEventArgs e)
+        { 
+            MessageBox.Show("При нажатии кнопки плюс у вас откроется Excel файл в котором вы сможете добавлять свои данные и они потом отобразятся в программе.", "Инфо", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void info_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("При нажатии кнопки плюс у вас откроется окно в котором вы сможете добавлять свои данные и они потом отобразятся в программе.", "Инфо", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }
 
