@@ -137,9 +137,17 @@
                                 <ComboBox ItemsSource="{Binding AvailableCategories}"
                                           SelectedItem="{Binding SelectedAvailableCategory}"
                                           Style="{StaticResource MaterialDesignComboBox}"
-                                          Width="408" Margin="2,2,0,2"
+                                          Width="195" Margin="2,2,0,2"
                                           materialDesign:HintAssist.Hint="Выберите Категорию"
                                           Foreground="{DynamicResource MaterialDesignBody}"/>
+                                <Button Click="NewData_Click"
+                                        Style="{StaticResource AnimatedButton}"
+                                        Width="200"
+                                        Height="25"
+                                        Margin="10,2,0,2">
+                                    <materialDesign:PackIcon Kind="AddBold" Height="17" />
+                                </Button>
+
                             </StackPanel>
                             <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredAvailableItems}"
                                 SelectedItem="{Binding SelectedAvailable}"
@@ -162,22 +170,43 @@
                     </TabItem>
                     
                     <TabItem Header="Бд с Excel">
-                        <DataGrid 
-                            SelectedItem="{Binding SelectedAvailable}"
-                            AutoGenerateColumns="False"
-                            CanUserAddRows="False"
-                            Style="{StaticResource ModernDataGrid}">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Наименование" 
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <ComboBox ItemsSource="{Binding AvailableCategories}"
+                                        SelectedItem="{Binding SelectedAvailableCategory}"
+                                        Style="{StaticResource MaterialDesignComboBox}"
+                                        Width="195" Margin="2,2,0,2"
+                                        materialDesign:HintAssist.Hint="Выберите Категорию"
+                                        Foreground="{DynamicResource MaterialDesignBody}"/>
+                                <Button Click="NewData_Click"
+                                        Style="{StaticResource AnimatedButton}"
+                                        Width="200"
+                                        Height="25"
+                                        Margin="10,2,0,2">
+                                    <materialDesign:PackIcon Kind="AddBold" Height="17" />
+                                </Button>
+                            </StackPanel>
+                                <DataGrid Grid.Row="1"
+                                        SelectedItem="{Binding SelectedAvailable}"
+                                        AutoGenerateColumns="False"
+                                        CanUserAddRows="False"
+                                        Style="{StaticResource ModernDataGrid}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Наименование" 
                                         Binding="{Binding Name}" 
                                         Width="*"
                                         FontSize="14"/>
-                                <DataGridTextColumn Header="Категория" 
+                                        <DataGridTextColumn Header="Категория" 
                                         Binding="{Binding Category}" 
                                         Width="*"
                                         FontSize="14"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                        </Grid>
                     </TabItem>
                 </TabControl>
             </materialDesign:Card>
