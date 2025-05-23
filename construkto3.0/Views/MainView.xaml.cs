@@ -174,7 +174,9 @@ namespace construkto3._0.Views
 
         private void NewData_Click(object sender, RoutedEventArgs e)
         {
-
+            DatabaseView databaseView = new DatabaseView();
+            databaseView.ShowDialog();
+           
         }
 
         private void infoExcel_Click(object sender, RoutedEventArgs e)

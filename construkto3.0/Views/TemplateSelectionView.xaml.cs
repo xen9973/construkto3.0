@@ -7,7 +7,6 @@ namespace construkto3._0.Views
     public partial class TemplateSelectionView : Window
     {
         private readonly Action<string> _onTemplateSelected;
-
         public TemplateSelectionView(Action<string> onTemplateSelected)
         {
             InitializeComponent();

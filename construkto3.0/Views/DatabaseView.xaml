@@ -3,10 +3,102 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:construkto3._0.ViewModels"
         xmlns:local="clr-namespace:construkto3._0.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="DatabaseView" Height="450" Width="800">
-    <Grid>
+        Title="DatabaseView" 
+        Height="800" Width="1883"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStyle="None">
+    <Window.Resources>
+        <Style x:Key="AnimatedButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Setter Property="Margin" Value="0,8"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Style.Triggers>
+                <!-- Анимация при наведении мыши -->
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
+                                    To="1.05" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
+                                    To="1.05" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <!-- Анимация при уходе мыши -->
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
+                                    To="1" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
+                                    To="1" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для DataGrid -->
+        <Style x:Key="ModernDataGrid" TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RowBackground" Value="Transparent"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource MaterialDesignLightBackground}"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="61.923"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         
+        <materialDesign:Card Grid.Row="0" Padding="10" Margin="0,0,0,10"
+                     MouseLeftButtonDown="Card_MouseLeftButtonDown">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <!-- Для заголовка -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Для кнопки -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Заголовок -->
+                <TextBlock Grid.Column="0"
+               Text="Управление базой данных"
+               FontSize="24" FontWeight="Bold"
+               Foreground="{DynamicResource MaterialDesignBody}"
+               VerticalAlignment="Center"/>
+
+             
+          
+                <Button Grid.Column="1"
+            Click="Minimize_click"
+            Style="{StaticResource AnimatedButton}"
+            materialDesign:ButtonAssist.CornerRadius="10"
+            Width="60" Height="30"
+            Margin="10,0,70,0">
+                    <materialDesign:PackIcon Kind="WindowMinimize" Width="20" Height="20"/>
+                </Button>
+                <Button Grid.Column="1"
+                Click="CloseButton_Click"
+                Style="{StaticResource AnimatedButton}"
+                materialDesign:ButtonAssist.CornerRadius="10"
+                Width="60" Height="30"
+                Margin="10,0,-70,0">
+                    <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                </Button>
+            </Grid>
+        </materialDesign:Card>
     </Grid>
 </Window>
