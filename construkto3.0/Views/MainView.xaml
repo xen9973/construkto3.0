@@ -329,26 +329,30 @@
                         <Button CommandParameter="Left" 
                                 Click="AlignButton_Click" 
                                 Style="{StaticResource AnimatedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="10">
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Margin="5,0,5,0">
                             <materialDesign:PackIcon Kind="FormatAlignLeft" Width="20" Height="20"/>
                         </Button>
                         <Button CommandParameter="Center" 
                                 Click="AlignButton_Click" 
                                 Style="{StaticResource AnimatedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="10">
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Margin="5,0,5,0">
                             <materialDesign:PackIcon Kind="FormatAlignCenter" Width="20" Height="20"/>
                         </Button>
                         <Button CommandParameter="Right" 
                                 Click="AlignButton_Click" 
                                 Style="{StaticResource AnimatedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="10">
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Margin="5,0,5,0">
                             <materialDesign:PackIcon Kind="FormatAlignRight" Width="20" Height="20"/>
                         </Button>
 
                         <!-- Кнопка для жирного текста -->
                         <Button Click="BoldButton_Click" 
                                 Style="{StaticResource AnimatedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="10">
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Margin="5,0,5,0">
                             <materialDesign:PackIcon Kind="FormatBold" Width="20" Height="20"/>
                         </Button>
                     </StackPanel>
