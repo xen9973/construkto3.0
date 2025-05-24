@@ -30,6 +30,7 @@ namespace construkto3._0.Services
                         Name = rdr.GetString(1), // Название может быть тем же, что и Description
                         Description = rdr.GetString(1), // Используем Description как основное описание
                         UnitPrice = rdr.GetDecimal(2),
+                        Source = "нет",
                         Category = "Товары"
                     });
                 }
@@ -47,6 +48,7 @@ namespace construkto3._0.Services
                         Name = rdr.GetString(1), // Название услуги
                         Description = rdr.GetString(1), // Для унификации используем Name как Description
                         UnitPrice = rdr.GetDecimal(2),
+                        Source = "нет",
                         Category = "Услуги"
                     });
                 }
@@ -64,6 +66,7 @@ namespace construkto3._0.Services
                         Name = rdr.GetString(1), // Название может быть тем же, что и Description
                         Description = rdr.GetString(1), // Используем Description как основное описание
                         UnitPrice = rdr.GetDecimal(2),
+                        Source = "нет",
                         Category = "Доп. товары"
                     });
                 }

@@ -125,6 +125,7 @@ namespace construkto3._0.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand AddExcelCommand { get; }
         public ICommand UpdateExcelCommand { get; }
+        public ICommand RefreshDatabaseCommand { get; }
 
         public MainViewModel()
         {
@@ -144,6 +145,7 @@ namespace construkto3._0.ViewModels
             SaveCommand = new RelayCommand(_ => SaveToRtf(), _ => !string.IsNullOrWhiteSpace(GeneratedText));
             AddExcelCommand = new RelayCommand(_ => AddExcelData());
             UpdateExcelCommand = new RelayCommand(_ => UpdateExcelData());
+            RefreshDatabaseCommand = new RelayCommand(_ => RefreshDatabase());
 
             DatabaseItems = new ObservableCollection<Item>(DatabaseService.LoadItems() ?? new List<Item>());
             FilteredDatabaseItems = new ObservableCollection<Item>(DatabaseItems);
@@ -151,6 +153,27 @@ namespace construkto3._0.ViewModels
 
             AvailableItems = new ObservableCollection<Item>();
             FilteredAvailableItems = new ObservableCollection<Item>();
+            ApplyAvailableItemsFilter();
+        }
+        private void RefreshDatabase()
+        {
+            // Перезагружаем данные из базы данных
+            DatabaseItems.Clear();
+            var items = DatabaseService.LoadItems() ?? new List<Item>();
+            foreach (var item in items)
+            {
+                DatabaseItems.Add(item);
+            }
+
+            Counterparties.Clear();
+            var counterparties = DatabaseService.LoadCounterparties() ?? new List<Counterparty>();
+            foreach (var counterparty in counterparties)
+            {
+                Counterparties.Add(counterparty);
+            }
+
+            // Перезапускаем фильтрацию, чтобы обновить отображаемые данные
+            ApplyDatabaseItemsFilter();
             ApplyAvailableItemsFilter();
         }
 

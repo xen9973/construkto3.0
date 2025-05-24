@@ -148,7 +148,9 @@
                                     <materialDesign:PackIcon Kind="AddBold" Height="17" />
                                 </Button>
                                 
-                                <Button Width="60"
+                                <Button Command="{Binding RefreshDatabaseCommand}"
+                                        Width="60"
+                                        Style="{StaticResource MaterialDesignRaisedButton}"
                                         Height="25"
                                         Margin="10,2,0,2">
                                     <materialDesign:PackIcon Kind="Update"/>
