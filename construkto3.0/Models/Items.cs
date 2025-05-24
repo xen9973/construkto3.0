@@ -1,26 +1,24 @@
-﻿namespace construkto3._0.Models
+﻿public class Item : ICloneable
 {
-    public class Item : ICloneable
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Category { get; set; }
-        public decimal UnitPrice { get; set; }
-        public int Quantity { get; set; }
-        public int AvailableQuantity { get; set; } 
-        public string Source { get; set; } 
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Category { get; set; }
+    public string Description { get; set; } // Это свойство добавлено
+    public decimal UnitPrice { get; set; }
+    public int Quantity { get; set; }
+    public string Source { get; set; }
 
-        public object Clone()
+    public object Clone()
+    {
+        return new Item
         {
-            return new Item
-            {
-                Name = this.Name,
-                Category = this.Category,
-                UnitPrice = this.UnitPrice,
-                Quantity = this.Quantity,
-                AvailableQuantity = this.AvailableQuantity,
-                Source = this.Source
-            };
-        }
+            Id = this.Id,
+            Name = this.Name,
+            Category = this.Category,
+            Description = this.Description,
+            UnitPrice = this.UnitPrice,
+            Quantity = this.Quantity,
+            Source = this.Source
+        };
     }
 }

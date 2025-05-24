@@ -12,6 +12,9 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MaterialDesignPaper}"
         WindowStyle="None">
+    <Window.DataContext>
+        <vm:DatabaseViewModel/>
+    </Window.DataContext>
     <Window.Resources>
         <Style x:Key="AnimatedButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
             <Setter Property="Margin" Value="0,8"/>
@@ -23,32 +26,29 @@
             </Setter>
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
             <Style.Triggers>
-                <!-- Анимация при наведении мыши -->
                 <EventTrigger RoutedEvent="MouseEnter">
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
-                                    To="1.05" Duration="0:0:0.2"/>
+                                             To="1.05" Duration="0:0:0.2"/>
                             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
-                                    To="1.05" Duration="0:0:0.2"/>
+                                             To="1.05" Duration="0:0:0.2"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
-                <!-- Анимация при уходе мыши -->
                 <EventTrigger RoutedEvent="MouseLeave">
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
-                                    To="1" Duration="0:0:0.2"/>
+                                             To="1" Duration="0:0:0.2"/>
                             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
-                                    To="1" Duration="0:0:0.2"/>
+                                             To="1" Duration="0:0:0.2"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
 
-        <!-- Стиль для DataGrid -->
         <Style x:Key="ModernDataGrid" TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -64,21 +64,18 @@
         </Grid.RowDefinitions>
 
         <materialDesign:Card Grid.Row="0" Padding="10" Margin="0,0,0,10"
-                     MouseLeftButtonDown="Card_MouseLeftButtonDown">
+                             MouseLeftButtonDown="Card_MouseLeftButtonDown">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <!-- Для заголовка -->
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Для кнопки -->
                 </Grid.ColumnDefinitions>
 
-                <!-- Заголовок -->
                 <TextBlock Grid.Column="0"
-                        Text="Управление базой данных"
-                        FontSize="24" FontWeight="Bold"
-                        Foreground="{DynamicResource MaterialDesignBody}"
-                        VerticalAlignment="Center"/>
+                           Text="Управление базой данных"
+                           FontSize="24" FontWeight="Bold"
+                           Foreground="{DynamicResource MaterialDesignBody}"
+                           VerticalAlignment="Center"/>
                 <Button Grid.Column="1"
                         Click="Minimize_click"
                         Style="{StaticResource AnimatedButton}"
@@ -110,43 +107,48 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                               <DataGrid Grid.Column="0"
-                                         AutoGenerateColumns="False"
-                                         CanUserAddRows="True"
-                                         Style="{StaticResource ModernDataGrid}"
-                                         Width="720">
+                            <DataGrid Grid.Column="0"
+                                      ItemsSource="{Binding GoodsItems}"
+                                      SelectedItem="{Binding SelectedGoodsItem}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      Style="{StaticResource ModernDataGrid}"
+                                      Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
-                                                        Binding="{Binding Name}"
+                                                        Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                                                         Width="*"
                                                         FontSize="14"/>
                                     <DataGridTextColumn Header="Тип"
-                                                        Binding="{Binding Name}"
+                                                        Binding="{Binding Source, UpdateSourceTrigger=PropertyChanged}"
                                                         Width="*"
                                                         FontSize="14"/>
                                     <DataGridTextColumn Header="Описание"
-                                                        Binding="{Binding Name}"
+                                                        Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                                                         Width="*"
                                                         FontSize="14"/>
                                     <DataGridTextColumn Header="Цена"
-                                                        Binding="{Binding Name}"
+                                                        Binding="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}"
                                                         Width="*"
                                                         FontSize="14"/>
-                                </DataGrid.Columns>>
+                                </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding SaveGoodsCommand}">
                                     <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding DeleteGoodsCommand}">
                                     <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding UpdateGoodsCommand}">
                                     <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
-                     </TabItem>
+                    </TabItem>
                     <TabItem Header="Услуги">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -154,33 +156,38 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <DataGrid Grid.Column="0"
+                                      ItemsSource="{Binding ServicesItems}"
+                                      SelectedItem="{Binding SelectedServicesItem}"
                                       AutoGenerateColumns="False"
-                                      CanUserAddRows="True"
+                                      CanUserAddRows="False"
                                       Style="{StaticResource ModernDataGrid}"
                                       Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
+                                                        Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
                                     <DataGridTextColumn Header="Описание"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
+                                                        Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
                                     <DataGridTextColumn Header="Цена"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
-                                </DataGrid.Columns> >
+                                                        Binding="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
+                                </DataGrid.Columns>
                             </DataGrid>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" >
-                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding SaveServicesCommand}">
                                     <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding DeleteServicesCommand}">
                                     <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding UpdateServicesCommand}">
                                     <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
@@ -193,37 +200,42 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <DataGrid Grid.Column="0"
-                       AutoGenerateColumns="False"
-                       CanUserAddRows="True"
-                       Style="{StaticResource ModernDataGrid}"
-                       Width="720">
+                                      ItemsSource="{Binding AdditionalItems}"
+                                      SelectedItem="{Binding SelectedAdditionalItem}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      Style="{StaticResource ModernDataGrid}"
+                                      Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
+                                                        Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
                                     <DataGridTextColumn Header="Тип"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
+                                                        Binding="{Binding Source, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
                                     <DataGridTextColumn Header="Описание"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
+                                                        Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
                                     <DataGridTextColumn Header="Цена"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
-                                </DataGrid.Columns> >
+                                                        Binding="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
+                                </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding SaveAdditionalCommand}">
                                     <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding DeleteAdditionalCommand}">
                                     <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding UpdateAdditionalCommand}">
                                     <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
@@ -236,33 +248,38 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <DataGrid Grid.Column="0"
-                       AutoGenerateColumns="False"
-                       CanUserAddRows="True"
-                       Style="{StaticResource ModernDataGrid}"
-                       Width="720">
+                                      ItemsSource="{Binding Counterparties}"
+                                      SelectedItem="{Binding SelectedCounterpartyItem}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      Style="{StaticResource ModernDataGrid}"
+                                      Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
+                                                        Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
                                     <DataGridTextColumn Header="Адрес"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
+                                                        Binding="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
                                     <DataGridTextColumn Header="Контактные данные"
-                                      Binding="{Binding Name}"
-                                      Width="*"
-                                      FontSize="14"/>
-                                </DataGrid.Columns> >
+                                                        Binding="{Binding Contact, UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="*"
+                                                        FontSize="14"/>
+                                </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding AddCounterpartyCommand}">
                                     <materialDesign:PackIcon Kind="UsersAdd" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding DeleteCounterpartyCommand}">
                                     <materialDesign:PackIcon Kind="UserRemove" Width="20" Height="20"/>
                                 </Button>
-                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
+                                        Command="{Binding UpdateCounterpartyCommand}">
                                     <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>

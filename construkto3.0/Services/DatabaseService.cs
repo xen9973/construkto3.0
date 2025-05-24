@@ -1,12 +1,13 @@
 ﻿using construkto3._0.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 
 namespace construkto3._0.Services
 {
     public static class DatabaseService
     {
-        // Берём connection string из appsettings.json через App.Configuration
         private static readonly string _connString =
             App.Configuration.GetConnectionString("OfferConstructorDb");
 
@@ -26,7 +27,8 @@ namespace construkto3._0.Services
                     items.Add(new Item
                     {
                         Id = rdr.GetInt32(0),
-                        Name = rdr.GetString(1),
+                        Name = rdr.GetString(1), // Название может быть тем же, что и Description
+                        Description = rdr.GetString(1), // Используем Description как основное описание
                         UnitPrice = rdr.GetDecimal(2),
                         Category = "Товары"
                     });
@@ -42,7 +44,8 @@ namespace construkto3._0.Services
                     items.Add(new Item
                     {
                         Id = rdr.GetInt32(0),
-                        Name = rdr.GetString(1),
+                        Name = rdr.GetString(1), // Название услуги
+                        Description = rdr.GetString(1), // Для унификации используем Name как Description
                         UnitPrice = rdr.GetDecimal(2),
                         Category = "Услуги"
                     });
@@ -58,7 +61,8 @@ namespace construkto3._0.Services
                     items.Add(new Item
                     {
                         Id = rdr.GetInt32(0),
-                        Name = rdr.GetString(1),
+                        Name = rdr.GetString(1), // Название может быть тем же, что и Description
+                        Description = rdr.GetString(1), // Используем Description как основное описание
                         UnitPrice = rdr.GetDecimal(2),
                         Category = "Доп. товары"
                     });
@@ -101,8 +105,139 @@ namespace construkto3._0.Services
             cmd.Parameters.AddWithValue("@Address", cp.Address ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@ContactInfo", cp.Contact ?? (object)DBNull.Value);
 
-            // Получаем созданный ID и присваиваем его объекту
             cp.Id = (int)cmd.ExecuteScalar();
+        }
+
+        public static void UpdateCounterparty(Counterparty cp)
+        {
+            using var conn = new SqlConnection(_connString);
+            conn.Open();
+            using var cmd = new SqlCommand(@"
+                UPDATE dbo.Counterparties
+                SET Name = @Name, Address = @Address, ContactInfo = @ContactInfo
+                WHERE CounterpartyID = @Id", conn);
+            cmd.Parameters.AddWithValue("@Id", cp.Id);
+            cmd.Parameters.AddWithValue("@Name", cp.Name);
+            cmd.Parameters.AddWithValue("@Address", cp.Address ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@ContactInfo", cp.Contact ?? (object)DBNull.Value);
+            cmd.ExecuteNonQuery();
+        }
+
+        public static void DeleteCounterparty(int id)
+        {
+            using var conn = new SqlConnection(_connString);
+            conn.Open();
+            using var cmd = new SqlCommand("DELETE FROM dbo.Counterparties WHERE CounterpartyID = @Id", conn);
+            cmd.Parameters.AddWithValue("@Id", id);
+            cmd.ExecuteNonQuery();
+        }
+
+        public static void AddItem(Item item)
+        {
+            string tableName;
+            string idColumn;
+            string nameColumn;
+
+            switch (item.Category)
+            {
+                case "Товары":
+                    tableName = "Goods";
+                    idColumn = "GoodID";
+                    nameColumn = "Description";
+                    break;
+                case "Услуги":
+                    tableName = "Services";
+                    idColumn = "ServiceID";
+                    nameColumn = "Name";
+                    break;
+                case "Доп. товары":
+                    tableName = "AdditionalGoods";
+                    idColumn = "AdditionalGoodID";
+                    nameColumn = "Description";
+                    break;
+                default:
+                    throw new ArgumentException("Неизвестная категория: " + item.Category);
+            }
+
+            using var conn = new SqlConnection(_connString);
+            conn.Open();
+            using var cmd = new SqlCommand($@"
+                INSERT INTO dbo.{tableName} ({nameColumn}, Cost)
+                VALUES (@Name, @Cost);
+                SELECT CAST(SCOPE_IDENTITY() AS int);", conn);
+            cmd.Parameters.AddWithValue("@Name", item.Name);
+            cmd.Parameters.AddWithValue("@Cost", item.UnitPrice);
+
+            item.Id = (int)cmd.ExecuteScalar();
+        }
+
+        public static void UpdateItem(Item item)
+        {
+            string tableName;
+            string idColumn;
+            string nameColumn;
+
+            switch (item.Category)
+            {
+                case "Товары":
+                    tableName = "Goods";
+                    idColumn = "GoodID";
+                    nameColumn = "Description";
+                    break;
+                case "Услуги":
+                    tableName = "Services";
+                    idColumn = "ServiceID";
+                    nameColumn = "Name";
+                    break;
+                case "Доп. товары":
+                    tableName = "AdditionalGoods";
+                    idColumn = "AdditionalGoodID";
+                    nameColumn = "Description";
+                    break;
+                default:
+                    throw new ArgumentException("Неизвестная категория: " + item.Category);
+            }
+
+            using var conn = new SqlConnection(_connString);
+            conn.Open();
+            using var cmd = new SqlCommand($@"
+                UPDATE dbo.{tableName}
+                SET {nameColumn} = @Name, Cost = @Cost
+                WHERE {idColumn} = @Id", conn);
+            cmd.Parameters.AddWithValue("@Id", item.Id);
+            cmd.Parameters.AddWithValue("@Name", item.Name);
+            cmd.Parameters.AddWithValue("@Cost", item.UnitPrice);
+            cmd.ExecuteNonQuery();
+        }
+
+        public static void DeleteItem(Item item)
+        {
+            string tableName;
+            string idColumn;
+
+            switch (item.Category)
+            {
+                case "Товары":
+                    tableName = "Goods";
+                    idColumn = "GoodID";
+                    break;
+                case "Услуги":
+                    tableName = "Services";
+                    idColumn = "ServiceID";
+                    break;
+                case "Доп. товары":
+                    tableName = "AdditionalGoods";
+                    idColumn = "AdditionalGoodID";
+                    break;
+                default:
+                    throw new ArgumentException("Неизвестная категория: " + item.Category);
+            }
+
+            using var conn = new SqlConnection(_connString);
+            conn.Open();
+            using var cmd = new SqlCommand($"DELETE FROM dbo.{tableName} WHERE {idColumn} = @Id", conn);
+            cmd.Parameters.AddWithValue("@Id", item.Id);
+            cmd.ExecuteNonQuery();
         }
     }
 }
