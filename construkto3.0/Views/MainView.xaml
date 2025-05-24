@@ -142,11 +142,18 @@
                                           Foreground="{DynamicResource MaterialDesignBody}"/>
                                 <Button Click="NewData_Click"
                                         Style="{StaticResource AnimatedButton}"
-                                        Width="140"
+                                        Width="70"
                                         Height="25"
                                         Margin="10,2,0,2">
                                     <materialDesign:PackIcon Kind="AddBold" Height="17" />
                                 </Button>
+                                
+                                <Button Width="60"
+                                        Height="25"
+                                        Margin="10,2,0,2">
+                                    <materialDesign:PackIcon Kind="Update"/>
+                                </Button>
+                                
                                 <Button Click="info_Click"
                                          Style="{StaticResource AnimatedButton}"
                                          Width="50"
@@ -156,7 +163,7 @@
                                 </Button>
 
                             </StackPanel>
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredAvailableItems}"
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredDatabaseItems}"
                                 SelectedItem="{Binding SelectedAvailable}"
                                 AutoGenerateColumns="False"
                                 CanUserAddRows="False"
@@ -183,16 +190,24 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                                <ComboBox 
+                                <ComboBox ItemsSource="{Binding ExcelCategories}"
+                                          SelectedItem="{Binding SelectedExcelCategory}"
+                                          Style="{DynamicResource MaterialDesignComboBox}"
                                         Width="195" Margin="2,2,0,2"
                                         materialDesign:HintAssist.Hint="Выберите Категорию"
                                         Foreground="{DynamicResource MaterialDesignBody}"/>
-                                <Button Click="NewData_Click"
+                                <Button Command="{Binding AddExcelCommand}"
                                         Style="{StaticResource AnimatedButton}"
-                                        Width="140"
+                                        Width="70"
                                         Height="25"
                                         Margin="10,2,0,2">
                                     <materialDesign:PackIcon Kind="AddBold" Height="17" />
+                                </Button>
+                                <Button Command="{Binding UpdateExcelCommand}"
+                                        Width="60"
+                                        Height="25"
+                                        Margin="10,2,0,2">
+                                    <materialDesign:PackIcon Kind="Update"/>
                                 </Button>
                                 <Button Click="infoExcel_Click"
                                         Style="{StaticResource AnimatedButton}"
@@ -201,8 +216,10 @@
                                         Margin="10,2,0,2">
                                     <materialDesign:PackIcon Kind="InfoCircle"  />
                                 </Button>
+                                
                             </StackPanel>
                                 <DataGrid Grid.Row="1"
+                                        ItemsSource="{Binding FilteredAvailableItems}"
                                         SelectedItem="{Binding SelectedAvailable}"
                                         AutoGenerateColumns="False"
                                         CanUserAddRows="False"
