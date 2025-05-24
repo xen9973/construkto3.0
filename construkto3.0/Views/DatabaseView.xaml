@@ -11,7 +11,8 @@
         Height="800" Width="1000"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MaterialDesignPaper}"
-        WindowStyle="None">
+        WindowStyle="None"
+        ResizeMode="NoResize">
     <Window.DataContext>
         <vm:DatabaseViewModel/>
     </Window.DataContext>
@@ -136,7 +137,7 @@
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding SaveGoodsCommand}">
-                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                                    <materialDesign:PackIcon Kind="AddBold" Width="20" Height="20"/>
                                 </Button>
                                 <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding DeleteGoodsCommand}">
@@ -144,7 +145,7 @@
                                 </Button>
                                 <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding UpdateGoodsCommand}">
-                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
@@ -180,7 +181,7 @@
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding SaveServicesCommand}">
-                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                                    <materialDesign:PackIcon Kind="AddBold" Width="20" Height="20"/>
                                 </Button>
                                 <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding DeleteServicesCommand}">
@@ -188,7 +189,7 @@
                                 </Button>
                                 <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding UpdateServicesCommand}">
-                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
@@ -228,7 +229,7 @@
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding SaveAdditionalCommand}">
-                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                                    <materialDesign:PackIcon Kind="AddBold" Width="20" Height="20"/>
                                 </Button>
                                 <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding DeleteAdditionalCommand}">
@@ -236,7 +237,7 @@
                                 </Button>
                                 <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding UpdateAdditionalCommand}">
-                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
@@ -280,7 +281,7 @@
                                 </Button>
                                 <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
                                         Command="{Binding UpdateCounterpartyCommand}">
-                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
