@@ -8,7 +8,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="DatabaseView" 
-        Height="800" Width="1883"
+        Height="800" Width="1000"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MaterialDesignPaper}"
         WindowStyle="None">
@@ -99,7 +99,7 @@
         </materialDesign:Card>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2900*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <materialDesign:Card Grid.Column="0" Margin="0,0,10,0" Padding="10">
@@ -114,7 +114,7 @@
                                          AutoGenerateColumns="False"
                                          CanUserAddRows="True"
                                          Style="{StaticResource ModernDataGrid}"
-                                         Width="1600">
+                                         Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
                                                         Binding="{Binding Name}"
@@ -134,8 +134,16 @@
                                                         FontSize="14"/>
                                 </DataGrid.Columns>>
                             </DataGrid>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
-                                
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                </Button>
                             </StackPanel>
                         </Grid>
                      </TabItem>
@@ -149,7 +157,7 @@
                                       AutoGenerateColumns="False"
                                       CanUserAddRows="True"
                                       Style="{StaticResource ModernDataGrid}"
-                                      Width="1600">
+                                      Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
                                       Binding="{Binding Name}"
@@ -165,8 +173,16 @@
                                       FontSize="14"/>
                                 </DataGrid.Columns> >
                             </DataGrid>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
-
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" >
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </TabItem>
@@ -180,7 +196,7 @@
                        AutoGenerateColumns="False"
                        CanUserAddRows="True"
                        Style="{StaticResource ModernDataGrid}"
-                       Width="1600">
+                       Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
                                       Binding="{Binding Name}"
@@ -200,8 +216,16 @@
                                       FontSize="14"/>
                                 </DataGrid.Columns> >
                             </DataGrid>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
-
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </TabItem>
@@ -215,7 +239,7 @@
                        AutoGenerateColumns="False"
                        CanUserAddRows="True"
                        Style="{StaticResource ModernDataGrid}"
-                       Width="1600">
+                       Width="720">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Название"
                                       Binding="{Binding Name}"
@@ -231,8 +255,16 @@
                                       FontSize="14"/>
                                 </DataGrid.Columns> >
                             </DataGrid>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
-
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="UsersAdd" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="UserRemove" Width="20" Height="20"/>
+                                </Button>
+                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}">
+                                    <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </TabItem>
