@@ -62,7 +62,7 @@
             <RowDefinition Height="Auto" MinHeight="61.923"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
         <materialDesign:Card Grid.Row="0" Padding="10" Margin="0,0,0,10"
                      MouseLeftButtonDown="Card_MouseLeftButtonDown">
             <Grid>
@@ -97,5 +97,147 @@
                 </Button>
             </Grid>
         </materialDesign:Card>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2900*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <materialDesign:Card Grid.Column="0" Margin="0,0,10,0" Padding="10">
+                <TabControl Style="{StaticResource MaterialDesignTabControl}">
+                    <TabItem Header="Товары">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                               <DataGrid Grid.Column="0"
+                                         AutoGenerateColumns="False"
+                                         CanUserAddRows="True"
+                                         Style="{StaticResource ModernDataGrid}"
+                                         Width="1600">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Название"
+                                                        Binding="{Binding Name}"
+                                                        Width="*"
+                                                        FontSize="14"/>
+                                    <DataGridTextColumn Header="Тип"
+                                                        Binding="{Binding Name}"
+                                                        Width="*"
+                                                        FontSize="14"/>
+                                    <DataGridTextColumn Header="Описание"
+                                                        Binding="{Binding Name}"
+                                                        Width="*"
+                                                        FontSize="14"/>
+                                    <DataGridTextColumn Header="Цена"
+                                                        Binding="{Binding Name}"
+                                                        Width="*"
+                                                        FontSize="14"/>
+                                </DataGrid.Columns>>
+                            </DataGrid>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
+                                
+                            </StackPanel>
+                        </Grid>
+                     </TabItem>
+                    <TabItem Header="Услуги">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Grid.Column="0"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="True"
+                                      Style="{StaticResource ModernDataGrid}"
+                                      Width="1600">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Название"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                    <DataGridTextColumn Header="Описание"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                    <DataGridTextColumn Header="Цена"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                </DataGrid.Columns> >
+                            </DataGrid>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
+
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Доп.Товары">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Grid.Column="0"
+                       AutoGenerateColumns="False"
+                       CanUserAddRows="True"
+                       Style="{StaticResource ModernDataGrid}"
+                       Width="1600">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Название"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                    <DataGridTextColumn Header="Тип"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                    <DataGridTextColumn Header="Описание"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                    <DataGridTextColumn Header="Цена"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                </DataGrid.Columns> >
+                            </DataGrid>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
+
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Контрагенты">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Grid.Column="0"
+                       AutoGenerateColumns="False"
+                       CanUserAddRows="True"
+                       Style="{StaticResource ModernDataGrid}"
+                       Width="1600">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Название"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                    <DataGridTextColumn Header="Адрес"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                    <DataGridTextColumn Header="Контактные данные"
+                                      Binding="{Binding Name}"
+                                      Width="*"
+                                      FontSize="14"/>
+                                </DataGrid.Columns> >
+                            </DataGrid>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
+
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </materialDesign:Card>
+        </Grid>
     </Grid>
 </Window>
