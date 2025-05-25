@@ -332,6 +332,16 @@
                     <!-- Панель инструментов для редактирования -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                         <!-- Выбор шрифта -->
+                        <ComboBox x:Name="fontsize"
+                                   Width="100"
+                                   Height="25"
+                                   Margin="2,2,10,2"
+                                   Style="{StaticResource MaterialDesignComboBox}"
+                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                   materialDesign:HintAssist.Hint="Размер шрифта"
+                                   materialDesign:HintAssist.Foreground="{DynamicResource MaterialDesignBody}" 
+                                   IsEditable="True"/>
+
                         <ComboBox x:Name="FontComboBox" 
                                   Width="150" 
                                   Margin="0,0,10,0" 
