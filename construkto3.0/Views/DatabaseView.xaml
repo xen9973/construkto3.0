@@ -100,7 +100,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <materialDesign:Card Grid.Column="0" Margin="0,0,10,0" Padding="10">
+            <materialDesign:Card Grid.Column="0" Padding="10">
                 <TabControl Style="{StaticResource MaterialDesignTabControl}">
                     <TabItem Header="Товары">
                         <Grid>

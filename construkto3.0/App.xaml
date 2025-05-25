@@ -9,7 +9,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <!-- BundledTheme подключает светлую/тёмную тему + primary/secondary цвета -->
                 <materialDesign:BundledTheme BaseTheme="Light"
-                                            PrimaryColor="DeepPurple"
+                                            PrimaryColor="Cyan"
                                             SecondaryColor="Lime" />
 
                 <!-- Общие стили для всех контролов MaterialDesign -->
