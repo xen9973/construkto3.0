@@ -188,6 +188,12 @@ namespace construkto3._0.Views
         {
             MessageBox.Show("При нажатии кнопки плюс у вас откроется окно в котором вы сможете добавлять свои данные и они потом отобразятся в программе.", "Инфо", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void Settings_click(object sender, RoutedEventArgs e)
+        {
+            Settingsview settingsview = new Settingsview();
+            settingsview.ShowDialog();
+        }
     }
 }
 
