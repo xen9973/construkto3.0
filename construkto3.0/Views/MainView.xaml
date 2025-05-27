@@ -390,7 +390,7 @@
                     <RichTextBox Grid.Row="1" 
                                  x:Name="RichTextBoxEditor"
                                  VerticalScrollBarVisibility="Auto"
-                                 IsReadOnly="True"
+                                 
                                  FontSize="14"
                                  Background="Transparent"
                                  Foreground="{DynamicResource MaterialDesignBody}"

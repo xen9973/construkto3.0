@@ -372,8 +372,8 @@ namespace construkto3._0.ViewModels
         {
             var saveFileDialog = new SaveFileDialog
             {
-                Filter = "Rich Text Format (*.rtf)|*.rtf",
-                FileName = "Коммерческое предложение.rtf"
+                Filter = "Rich Text Format (.rtf)|.rtf|PDF Document (.pdf)|.pdf|Word Document (.docx)|.docx",
+                FileName = "Коммерческое предложение"
             };
 
             if (saveFileDialog.ShowDialog() == true)
