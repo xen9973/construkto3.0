@@ -28,6 +28,8 @@ namespace construkto3._0.Views
             }
             // Устанавливаем VM как DataContext для биндингов
             this.DataContext = new MainViewModel();
+            if (DataContext is MainViewModel vm)
+                vm.MainRichTextBox = this.RichTextBoxEditor;
         }
 
         private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

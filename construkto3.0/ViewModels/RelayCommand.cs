@@ -29,5 +29,9 @@ namespace construkto3._0.ViewModels
         {
             _execute(parameter);
         }
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
     }
 }

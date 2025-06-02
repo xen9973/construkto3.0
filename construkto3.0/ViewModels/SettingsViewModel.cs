@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using construkto3._0.Models;
 using Microsoft.Win32;
 
@@ -29,11 +30,31 @@ namespace construkto3._0.ViewModels
                 OnPropertyChanged(nameof(UserImagePath));
             }
         }
+        private BitmapImage _userImagePreview;
+        public BitmapImage UserImagePreview
+        {
+            get => _userImagePreview;
+            set { _userImagePreview = value; OnPropertyChanged(nameof(UserImagePreview)); }
+        }
 
         public SettingsViewModel()
         {
             // Загружаем существующие данные при старте, если есть
             LoadExistingData();
+        }
+
+        private BitmapImage LoadImageWithoutLock(string path)
+        {
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = stream;
+                image.EndInit();
+                image.Freeze();
+                return image;
+            }
         }
 
         private void LoadExistingData()
@@ -50,11 +71,23 @@ namespace construkto3._0.ViewModels
                     NewCounterparty.Name = lines[0];
                     NewCounterparty.Address = lines[1];
                     NewCounterparty.Contact = lines[2];
+                    NewCounterparty.INN = lines[3];
+                    NewCounterparty.KPP = lines[4];
+                    NewCounterparty.Phone = lines[5];
+                    NewCounterparty.Email = lines[6];
                 }
             }
             if (File.Exists(imagePath))
             {
                 UserImagePath = imagePath;
+                try
+                {
+                    UserImagePreview = LoadImageWithoutLock(UserImagePath);
+                }
+                catch
+                {
+                    UserImagePreview = null;
+                }
             }
         }
 
@@ -69,7 +102,16 @@ namespace construkto3._0.ViewModels
             string userDataFile = Path.Combine(userDataPath, "userData.txt");
             try
             {
-                File.WriteAllText(userDataFile, $"{NewCounterparty.Name}\n{NewCounterparty.Address}\n{NewCounterparty.Contact}");
+                // Теперь сохраняем все 7 строк: Name, Address, Contact, INN, KPP, Phone, Email
+                File.WriteAllText(userDataFile,
+                    $"{NewCounterparty.Name}\n" +
+                    $"{NewCounterparty.Address}\n" +
+                    $"{NewCounterparty.Contact}\n" +
+                    $"{NewCounterparty.INN}\n" +
+                    $"{NewCounterparty.KPP}\n" +
+                    $"{NewCounterparty.Phone}\n" +
+                    $"{NewCounterparty.Email}");
+
                 if (!string.IsNullOrEmpty(UserImagePath) && File.Exists(UserImagePath))
                 {
                     string targetImagePath = Path.Combine(userDataPath, "userImage.png");
@@ -90,11 +132,12 @@ namespace construkto3._0.ViewModels
                 Filter = "Image Files (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp|All files (*.*)|*.*",
                 Title = "Выберите изображение"
             };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                UserImagePath = openFileDialog.FileName; // Пока просто сохраняем путь, копия будет при сохранении
-            }
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    UserImagePath = openFileDialog.FileName;
+                    UserImagePreview = LoadImageWithoutLock(UserImagePath);
+                } // Пока просто сохраняем путь, копия будет при сохранении
+            
         }
     }
 }

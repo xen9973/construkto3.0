@@ -9,6 +9,8 @@ using construkto3._0.Models;
 using construkto3._0.Services;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Windows.Media.Imaging;
+using System.Windows.Controls;
 
 namespace construkto3._0.ViewModels
 {
@@ -70,7 +72,11 @@ namespace construkto3._0.ViewModels
         public string GeneratedText
         {
             get => _generatedText;
-            set => SetProperty(ref _generatedText, value);
+            set
+            {
+                SetProperty(ref _generatedText, value);
+                (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
         }
 
         private ObservableCollection<string> _availableCategories = new ObservableCollection<string>();
@@ -126,6 +132,7 @@ namespace construkto3._0.ViewModels
         public ICommand AddExcelCommand { get; }
         public ICommand UpdateExcelCommand { get; }
         public ICommand RefreshDatabaseCommand { get; }
+        public RichTextBox MainRichTextBox { get; set; }
 
         public MainViewModel()
         {
@@ -142,7 +149,7 @@ namespace construkto3._0.ViewModels
             GenerateCommand = new RelayCommand(_ => GenerateProposal(), _ => SelectedCounterparty != null && SelectedItems.Any());
             AddCommand = new RelayCommand(_ => AddSelectedItem(), _ => SelectedAvailable != null);
             RemoveCommand = new RelayCommand(_ => RemoveSelectedItem(), _ => SelectedChosen != null);
-            SaveCommand = new RelayCommand(_ => SaveToRtf(), _ => !string.IsNullOrWhiteSpace(GeneratedText));
+            SaveCommand = new RelayCommand(_ => SaveToRtf(), _ => true);
             AddExcelCommand = new RelayCommand(_ => AddExcelData());
             UpdateExcelCommand = new RelayCommand(_ => UpdateExcelData());
             RefreshDatabaseCommand = new RelayCommand(_ => RefreshDatabase());
@@ -155,6 +162,7 @@ namespace construkto3._0.ViewModels
             FilteredAvailableItems = new ObservableCollection<Item>();
             ApplyAvailableItemsFilter();
         }
+     
         private void RefreshDatabase()
         {
             // Перезагружаем данные из базы данных
@@ -372,105 +380,178 @@ namespace construkto3._0.ViewModels
         {
             var saveFileDialog = new SaveFileDialog
             {
-                Filter = "Rich Text Format (.rtf)|.rtf|PDF Document (.pdf)|.pdf|Word Document (.docx)|.docx",
+                Filter = "Rich Text Format (.rtf)|*.rtf|PDF Document (.pdf)|*.pdf|Word Document (.docx)|*.docx",
                 FileName = "Коммерческое предложение"
             };
 
             if (saveFileDialog.ShowDialog() == true)
             {
+                // Здесь MainRichTextBox — твой RichTextBox (с логотипом и форматированием)
+                if (MainRichTextBox == null)
+                {
+                    MessageBox.Show("Документ для сохранения не найден.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 using (var fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
                 {
-                    var flowDocument = new FlowDocument();
-                    var lines = GeneratedText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var line in lines)
-                    {
-                        var paragraph = new Paragraph(new Run(line.Trim()));
-                        flowDocument.Blocks.Add(paragraph);
-                    }
+                    // Сохраняем весь текущий документ с картинками и форматированием
+                    TextRange textRange = new TextRange(
+                        MainRichTextBox.Document.ContentStart,
+                        MainRichTextBox.Document.ContentEnd);
 
-                    TextRange textRange = new TextRange(flowDocument.ContentStart, flowDocument.ContentEnd);
-                    textRange.Save(fileStream, DataFormats.Rtf);
+                    // Проверяем выбранный формат
+                    string ext = System.IO.Path.GetExtension(saveFileDialog.FileName).ToLower();
+                    if (ext == ".rtf")
+                    {
+                        textRange.Save(fileStream, DataFormats.Rtf);
+                    }
+                    else if (ext == ".docx")
+                    {
+                        textRange.Save(fileStream, DataFormats.XamlPackage); // Word откроет XamlPackage
+                    }
+                    else if (ext == ".pdf")
+                    {
+                        MessageBox.Show("Сохранение в PDF не поддерживается стандартными средствами WPF.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        // Можно реализовать через сторонние библиотеки, например, MigraDoc, PdfSharp, iTextSharp и т.д.
+                    }
+                    else
+                    {
+                        textRange.Save(fileStream, DataFormats.Rtf);
+                    }
                 }
             }
         }
+        private Counterparty LoadSupplierFromSettings()
+        {
+            string userDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "userData");
+            string userDataFile = Path.Combine(userDataPath, "userData.txt");
 
+            if (File.Exists(userDataFile))
+            {
+                var lines = File.ReadAllLines(userDataFile);
+                // Ожидается: Name, Address, Contact, INN, KPP, Phone, Email (по строкам)
+                return new Counterparty
+                {
+                    Name = lines.Length > 0 ? lines[0] : "",
+                    Address = lines.Length > 1 ? lines[1] : "",
+                    Contact = lines.Length > 2 ? lines[2] : "",
+                    INN = lines.Length > 3 ? lines[3] : "",
+                    KPP = lines.Length > 4 ? lines[4] : "",
+                    Phone = lines.Length > 5 ? lines[5] : "",
+                    Email = lines.Length > 6 ? lines[6] : ""
+                };
+            }
+            return new Counterparty();
+        }
         private void GenerateProposal()
         {
-            var supplier = new Supplier
-            {
-                Name = "ООО Рога и Копыта",
-                INN = "1234567890",
-                KPP = "987654321",
-                Address = "г. Москва, ул. Примерная, 1",
-                Phone = "+7 (495) 123-45-67",
-                Email = "info@example.com"
-            };
+            var supplier = LoadSupplierFromSettings();
 
             if (SelectedCounterparty == null)
             {
-                GeneratedText = "Выберите контрагента.";
+                MessageBox.Show("Выберите контрагента.");
                 return;
             }
-
             if (!SelectedItems.Any())
             {
-                GeneratedText = "Пожалуйста, выберите хотя бы один товар или услугу.";
+                MessageBox.Show("Пожалуйста, выберите хотя бы один товар или услугу.");
                 return;
             }
 
-            var sb = new StringBuilder();
-            sb.AppendLine($"Коммерческое предложение № 001");
-            sb.AppendLine($"от {DateTime.Now:dd.MM.yyyy}\n");
+            var flowDocument = new FlowDocument();
 
-            sb.AppendLine($"Поставщик: {supplier.Name}");
-            sb.AppendLine($"ИНН/КПП: {supplier.INN}/{supplier.KPP}");
-            sb.AppendLine($"Адрес: {supplier.Address}");
-            sb.AppendLine($"Телефон: {supplier.Phone}");
-            sb.AppendLine($"Email: {supplier.Email}\n");
-
-            sb.AppendLine($"Покупатель: {SelectedCounterparty.Name}");
-            sb.AppendLine($"Адрес: {SelectedCounterparty.Address}");
-            sb.AppendLine($"Контактное лицо: {SelectedCounterparty.Contact}\n");
-
-            void AppendSection(string title, string category)
+            // === 1. ЛОГОТИП ===
+            string userDataFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "userData");
+            string[] possibleExtensions = { ".png", ".jpg", ".jpeg", ".bmp" };
+            string logoPath = possibleExtensions
+                .Select(ext => Path.Combine(userDataFolder, "userImage" + ext))
+                .FirstOrDefault(File.Exists);
+            if (File.Exists(logoPath))
             {
-                sb.AppendLine(title);
-                var sectionItems = SelectedItems.Where(i => i.Category == category).ToList();
-                if (!sectionItems.Any())
+                var image = new Image
                 {
-                    sb.AppendLine("(нет позиций)\n");
-                    return;
-                }
-                int idx = 1;
-                foreach (var it in sectionItems)
-                {
-                    decimal total = it.UnitPrice * it.Quantity;
-                    sb.AppendLine($"{idx++}. {it.Name} – {it.Quantity} шт. × {it.UnitPrice:N2} = {total:N2}");
-                }
-                sb.AppendLine();
+                    Source = new BitmapImage(new Uri(logoPath, UriKind.Absolute)),
+                    Width = 150,
+                    Height = 60,
+                    Margin = new Thickness(0, 0, 0, 18)
+                };
+                flowDocument.Blocks.Add(new BlockUIContainer(image) { Margin = new Thickness(0, 0, 0, 10) });
             }
 
-            AppendSection("I. Оборудование", "Товары");
-            AppendSection("II. Программа", "Услуги");
-            AppendSection("III. Доп.товары", "Доп. товары");
+            // === 2. ТЕКСТ КП ===
+            flowDocument.Blocks.Add(new Paragraph(new Bold(new Run($"Коммерческое предложение № 001"))));
+            flowDocument.Blocks.Add(new Paragraph(new Run($"от {DateTime.Now:dd.MM.yyyy}")));
+
+            var supplierBlock = new Paragraph();
+            supplierBlock.Inlines.Add(new Bold(new Run("Поставщик: ")));
+            supplierBlock.Inlines.Add(new Run($"{supplier.Name}"));
+            supplierBlock.Inlines.Add(new LineBreak());
+            supplierBlock.Inlines.Add(new Run($"ИНН/КПП: {supplier.INN}/{supplier.KPP}"));
+            supplierBlock.Inlines.Add(new LineBreak());
+            supplierBlock.Inlines.Add(new Run($"Адрес: {supplier.Address}"));
+            supplierBlock.Inlines.Add(new LineBreak());
+            supplierBlock.Inlines.Add(new Run($"Телефон: {supplier.Phone}"));
+            supplierBlock.Inlines.Add(new LineBreak());
+            supplierBlock.Inlines.Add(new Run($"Email: {supplier.Email}"));
+            supplierBlock.Inlines.Add(new LineBreak());
+            flowDocument.Blocks.Add(supplierBlock);
+
+            var buyerBlock = new Paragraph();
+            buyerBlock.Inlines.Add(new Bold(new Run("Покупатель: ")));
+            buyerBlock.Inlines.Add(new Run($"{SelectedCounterparty.Name}"));
+            buyerBlock.Inlines.Add(new LineBreak());
+            buyerBlock.Inlines.Add(new Run($"Адрес: {SelectedCounterparty.Address}"));
+            buyerBlock.Inlines.Add(new LineBreak());
+            buyerBlock.Inlines.Add(new Run($"Контактное лицо: {SelectedCounterparty.Contact}"));
+            supplierBlock.Inlines.Add(new LineBreak());
+            flowDocument.Blocks.Add(buyerBlock);
+
+            // === 3. ТАБЛИЦА ПОЗИЦИЙ ===
+            void AddSection(string title, string category)
+            {
+                var sectionItems = SelectedItems.Where(i => i.Category == category).ToList();
+                var p = new Paragraph(new Bold(new Run(title)));
+                flowDocument.Blocks.Add(p);
+
+                if (sectionItems.Any())
+                {
+                    int idx = 1;
+                    foreach (var it in sectionItems)
+                    {
+                        decimal total = it.UnitPrice * it.Quantity;
+                        flowDocument.Blocks.Add(new Paragraph(
+                            new Run($"{idx++}. {it.Name} – {it.Quantity} шт. × {it.UnitPrice:N2} = {total:N2}")
+                        ));
+                    }
+                }
+                else
+                {
+                    flowDocument.Blocks.Add(new Paragraph(new Run("(нет позиций)\n")));
+                }
+                flowDocument.Blocks.Add(new Paragraph());
+            }
+            AddSection("I. Оборудование", "Товары");
+            AddSection("II. Программа", "Услуги");
+            AddSection("III. Доп.товары", "Доп. товары");
 
             decimal Sum(string cat) => SelectedItems
                 .Where(i => i.Category == cat)
                 .Sum(i => i.UnitPrice * i.Quantity);
 
-            sb.AppendLine($"Итого «Программа»: {Sum("Товары"):N2}");
-            sb.AppendLine($"Итого «Оборудование»: {Sum("Услуги"):N2}");
-            sb.AppendLine($"Итого «Доп.товары»: {Sum("Доп. товары"):N2}\n");
+            flowDocument.Blocks.Add(new Paragraph(new Run($"Итого «Оборудование»: {Sum("Товары"):N2}")));
+            flowDocument.Blocks.Add(new Paragraph(new Run($"Итого «Программа»: {Sum("Услуги"):N2}")));
+            flowDocument.Blocks.Add(new Paragraph(new Run($"Итого «Доп.товары»: {Sum("Доп. товары"):N2}\n")));
 
             decimal grand = SelectedItems.Sum(i => i.UnitPrice * i.Quantity);
-            sb.AppendLine($"Общая сумма: {grand:N2}\n");
+            flowDocument.Blocks.Add(new Paragraph(new Bold(new Run($"Общая сумма: {grand:N2}\n"))));
 
-            sb.AppendLine("С уважением,\n");
-            sb.AppendLine("____________________     ____________________");
-            sb.AppendLine("(ФИО, Должность)         (ФИО, Должность)");
-            sb.AppendLine("М.П.");
+            flowDocument.Blocks.Add(new Paragraph(new Run("С уважением,\n")));
+            flowDocument.Blocks.Add(new Paragraph(new Run("____________________     ____________________\n(ФИО, Должность)         (ФИО, Должность)\nМ.П.")));
 
-            GeneratedText = sb.ToString();
+            // === 4. ПОКАЗАТЬ В RichTextBox ===
+            if (MainRichTextBox != null)
+                MainRichTextBox.Document = flowDocument;
         }
     }
 }
