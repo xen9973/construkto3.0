@@ -480,7 +480,7 @@ namespace construkto3._0.ViewModels
             }
 
             // === 2. ТЕКСТ КП ===
-            flowDocument.Blocks.Add(new Paragraph(new Bold(new Run($"Коммерческое предложение № 001"))));
+            flowDocument.Blocks.Add(new Paragraph(new Bold(new Run($"Коммерческое предложение"))));
             flowDocument.Blocks.Add(new Paragraph(new Run($"от {DateTime.Now:dd.MM.yyyy}")));
 
             var supplierBlock = new Paragraph();
