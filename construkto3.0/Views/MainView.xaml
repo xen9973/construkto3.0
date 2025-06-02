@@ -233,6 +233,7 @@
                                         SelectedItem="{Binding SelectedAvailable}"
                                         AutoGenerateColumns="False"
                                         CanUserAddRows="False"
+                                        IsReadOnly="True"
                                         Style="{StaticResource ModernDataGrid}">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Наименование" 
@@ -312,6 +313,18 @@
                             CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
                             Style="{StaticResource AnimatedButton}"
                             materialDesign:ButtonAssist.CornerRadius="10"/>
+                    <Button Width="80" Margin="95,5,0,0"
+                            CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
+                            Style="{StaticResource AnimatedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="10">
+                            <materialDesign:PackIcon Kind="Printer" Width="30" Height="30"/>
+                    </Button>
+                    <Button Width="80" Margin="-15,-40,80,5"
+                            CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
+                            Style="{StaticResource AnimatedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="10">
+                            <materialDesign:PackIcon Kind="Email" Width="30" Height="30"/>
+                    </Button>
                     <Label x:Name="SelectedTemplateLabel1" 
                             Content="Выбранный шаблон:" 
                             Foreground="{DynamicResource MaterialDesignBody}"
@@ -324,6 +337,11 @@
                             Click="SelectTemplate_Click"
                             Style="{StaticResource AnimatedButton}"
                             materialDesign:ButtonAssist.CornerRadius="10"/>
+                    <Button Content="Сгенерировать нейросетью"
+                            Command="{Binding GenerateAIProposalCommand}"
+                            Style="{StaticResource AnimatedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="10">
+                    </Button>
                 </StackPanel>
             </materialDesign:Card>
 
@@ -398,7 +416,6 @@
                     <RichTextBox Grid.Row="1" 
                                  x:Name="RichTextBoxEditor"
                                  VerticalScrollBarVisibility="Auto"
-                                 
                                  FontSize="14"
                                  Background="Transparent"
                                  Foreground="{DynamicResource MaterialDesignBody}"

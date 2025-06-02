@@ -11,6 +11,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
+using System.Net.Http;
 
 namespace construkto3._0.ViewModels
 {
@@ -133,6 +134,7 @@ namespace construkto3._0.ViewModels
         public ICommand UpdateExcelCommand { get; }
         public ICommand RefreshDatabaseCommand { get; }
         public RichTextBox MainRichTextBox { get; set; }
+        public ICommand GenerateAIProposalCommand { get; }
 
         public MainViewModel()
         {
@@ -153,6 +155,7 @@ namespace construkto3._0.ViewModels
             AddExcelCommand = new RelayCommand(_ => AddExcelData());
             UpdateExcelCommand = new RelayCommand(_ => UpdateExcelData());
             RefreshDatabaseCommand = new RelayCommand(_ => RefreshDatabase());
+            GenerateAIProposalCommand = new RelayCommand(async _ => await GenerateAIProposalAsync(), _ => SelectedCounterparty != null && SelectedItems.Any());
 
             DatabaseItems = new ObservableCollection<Item>(DatabaseService.LoadItems() ?? new List<Item>());
             FilteredDatabaseItems = new ObservableCollection<Item>(DatabaseItems);
@@ -162,7 +165,87 @@ namespace construkto3._0.ViewModels
             FilteredAvailableItems = new ObservableCollection<Item>();
             ApplyAvailableItemsFilter();
         }
-     
+
+        public async Task GenerateAIProposalAsync()
+        {
+            var supplier = LoadSupplierFromSettings();
+
+            if (SelectedCounterparty == null)
+            {
+                MessageBox.Show("Выберите контрагента.");
+                return;
+            }
+            if (!SelectedItems.Any())
+            {
+                MessageBox.Show("Пожалуйста, выберите хотя бы один товар или услугу.");
+                return;
+            }
+
+            // Формируем промпт для нейросети
+            var sb = new StringBuilder();
+            sb.AppendLine("Составь коммерческое предложение на русском языке по этим данным.");
+            sb.AppendLine($"Поставщик: {supplier.Name}, ИНН: {supplier.INN}, КПП: {supplier.KPP}, адрес: {supplier.Address}, телефон: {supplier.Phone}, email: {supplier.Email}");
+            sb.AppendLine($"Покупатель: {SelectedCounterparty.Name}, адрес: {SelectedCounterparty.Address}, контакт: {SelectedCounterparty.Contact}");
+            sb.AppendLine("Список позиций: (сделай просто списком разбив на подпункты типа товары, доп товары, и услуги не создавай таблицу)");
+            int idx = 1;
+            foreach (var it in SelectedItems)
+            {
+                sb.AppendLine($"{idx++}. {it.Name} — {it.Quantity} шт. × {it.UnitPrice:N2} = {it.UnitPrice * it.Quantity:N2} руб.");
+            }
+            sb.AppendLine("Оформи в виде делового письма, итоговую сумму выдели отдельно.");
+
+            string prompt = sb.ToString();
+
+            string proposalText = "";
+            try
+            {
+                proposalText = await GenerateProposalWithAIAsync(prompt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка запроса к нейросети: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Показываем результат в RichTextBox (без логотипа и форматирования, только текст)
+            if (MainRichTextBox != null)
+            {
+                MainRichTextBox.Document.Blocks.Clear();
+                string[] lines = proposalText.Replace("\r\n", "\n").Split('\n');
+                foreach (var line in lines)
+                {
+                    // Если строка пустая — добавим пустой абзац для "отступа"
+                    if (!string.IsNullOrWhiteSpace(line))
+                        MainRichTextBox.Document.Blocks.Add(new Paragraph(new Run(line)));
+                    else
+                        MainRichTextBox.Document.Blocks.Add(new Paragraph());
+                }
+            }
+        }
+
+        private async Task<string> GenerateProposalWithAIAsync(string prompt)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                // Формируем payload с помощью сериализации
+                var payload = new { message = prompt };
+                var json = System.Text.Json.JsonSerializer.Serialize(payload);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PostAsync("http://localhost:5000/chat", content);
+
+                // Для диагностики: если запрос неудачный, получим текст ответа
+                if (!response.IsSuccessStatusCode)
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Status: {(int)response.StatusCode} {response.StatusCode}. Response: {error}");
+                }
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var doc = System.Text.Json.JsonDocument.Parse(responseBody);
+                return doc.RootElement.GetProperty("response").GetString();
+            }
+        }
         private void RefreshDatabase()
         {
             // Перезагружаем данные из базы данных

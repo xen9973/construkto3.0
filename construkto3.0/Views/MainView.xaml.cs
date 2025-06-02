@@ -12,6 +12,7 @@ using construkto3._0.ViewModels;
 using Newtonsoft.Json;
 using construkto3._0.Models;
 using System.Windows.Input;
+using construkto3._0.aiserver;
 
 namespace construkto3._0.Views
 {
@@ -30,6 +31,8 @@ namespace construkto3._0.Views
             this.DataContext = new MainViewModel();
             if (DataContext is MainViewModel vm)
                 vm.MainRichTextBox = this.RichTextBoxEditor;
+            var g4fServer = new G4FServerManager();
+            g4fServer.StartServerIfNotRunning();
         }
 
         private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
