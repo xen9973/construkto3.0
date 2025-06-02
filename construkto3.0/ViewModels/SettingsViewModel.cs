@@ -136,7 +136,7 @@ namespace construkto3._0.ViewModels
                 {
                     UserImagePath = openFileDialog.FileName;
                     UserImagePreview = LoadImageWithoutLock(UserImagePath);
-                } // Пока просто сохраняем путь, копия будет при сохранении
+                } 
             
         }
     }

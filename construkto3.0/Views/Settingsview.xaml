@@ -130,38 +130,46 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="400">
-                <TextBox materialDesign:HintAssist.Hint="Наименование"
+                <TextBox 
+                    materialDesign:HintAssist.Hint="Наименование"
                          Text="{Binding NewCounterparty.Name, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Foreground="{DynamicResource MaterialDesignBody}"
                          Margin="0,10,0,0"/>
 
                 <TextBox materialDesign:HintAssist.Hint="Адрес"
                          Text="{Binding NewCounterparty.Address, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10,0,0"/>
+                         Margin="0,10,0,0"
+                         Foreground="{DynamicResource MaterialDesignBody}"/>
 
                 <TextBox materialDesign:HintAssist.Hint="Контактное лицо"
                          Text="{Binding NewCounterparty.Contact, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10,0,0"/>
+                         Margin="0,10,0,0"
+                         Foreground="{DynamicResource MaterialDesignBody}"/>
 
                 <!-- Новые поля для ИНН, КПП, Телефон, Email -->
                 <TextBox materialDesign:HintAssist.Hint="ИНН"
                          Text="{Binding NewCounterparty.INN, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10,0,0"/>
+                         Margin="0,10,0,0"
+                         Foreground="{DynamicResource MaterialDesignBody}"/>
                 <TextBox materialDesign:HintAssist.Hint="КПП"
                          Text="{Binding NewCounterparty.KPP, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10,0,0"/>
+                         Margin="0,10,0,0"
+                         Foreground="{DynamicResource MaterialDesignBody}"/>
                 <TextBox materialDesign:HintAssist.Hint="Телефон"
                          Text="{Binding NewCounterparty.Phone, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10,0,0"/>
+                         Margin="0,10,0,0"
+                         Foreground="{DynamicResource MaterialDesignBody}"/>
                 <TextBox materialDesign:HintAssist.Hint="Email"
                          Text="{Binding NewCounterparty.Email, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10,0,0"/>
+                         Margin="0,10,0,0"
+                         Foreground="{DynamicResource MaterialDesignBody}"/>
 
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Right">
                     <Button Content="Сохранить"
@@ -177,7 +185,7 @@
             </StackPanel>
             <StackPanel Grid.Column="0" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Grid Width="90" Height="90">
-                    <Rectangle RadiusX="10" RadiusY="10" Width="90" Height="90">
+                    <Rectangle RadiusX="10" RadiusY="10" Width="auto" Height="auto">
                         <Rectangle.Fill>
                             <VisualBrush>
                                 <VisualBrush.Visual>
