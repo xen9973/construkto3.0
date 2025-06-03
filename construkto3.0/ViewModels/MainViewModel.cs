@@ -654,7 +654,9 @@ namespace construkto3._0.ViewModels
             flowDocument.Blocks.Add(new Paragraph(new Bold(new Run($"Общая сумма: {grand:N2}\n"))));
 
             flowDocument.Blocks.Add(new Paragraph(new Run("С уважением,\n")));
-            flowDocument.Blocks.Add(new Paragraph(new Run("____________________     ____________________\n(ФИО, Должность)         (ФИО, Должность)\nМ.П.")));
+            flowDocument.Blocks.Add(new Paragraph(new Run("____________________     ____________________")));
+            flowDocument.Blocks.Add(new Paragraph(new Run("(ФИО, Должность)         (ФИО, Должность)")));
+            flowDocument.Blocks.Add(new Paragraph(new Run("                                             М.П.")));
 
             // === 4. ПОКАЗАТЬ В RichTextBox ===
             if (MainRichTextBox != null)
