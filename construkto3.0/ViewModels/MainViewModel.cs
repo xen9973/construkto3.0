@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Net.Http;
 using construkto3._0.Views;
+using Outlook = Microsoft.Office.Interop.Outlook;
+
 
 namespace construkto3._0.ViewModels
 {
@@ -158,6 +160,8 @@ namespace construkto3._0.ViewModels
                     this.SelectedCounterparty = vm.SelectedCounterparty;
             }
         });
+        public ICommand PrintCommand { get; }
+        public ICommand SendEmailViaOutlookCommand { get; }
 
         public MainViewModel()
         {
@@ -179,6 +183,8 @@ namespace construkto3._0.ViewModels
             UpdateExcelCommand = new RelayCommand(_ => UpdateExcelData());
             RefreshDatabaseCommand = new RelayCommand(_ => RefreshDatabase());
             GenerateAIProposalCommand = new RelayCommand(async _ => await GenerateAIProposalAsync(), _ => SelectedCounterparty != null && SelectedItems.Any());
+            PrintCommand = new RelayCommand(_ => Print(), _ => IsProposalCreated);
+            SendEmailViaOutlookCommand = new RelayCommand(_ => SendEmailViaOutlook(), _ => IsProposalCreated && SelectedCounterparty != null && !string.IsNullOrEmpty(SelectedCounterparty.Email));
 
             DatabaseItems = new ObservableCollection<Item>(DatabaseService.LoadItems() ?? new List<Item>());
             FilteredDatabaseItems = new ObservableCollection<Item>(DatabaseItems);
@@ -187,6 +193,108 @@ namespace construkto3._0.ViewModels
             AvailableItems = new ObservableCollection<Item>();
             FilteredAvailableItems = new ObservableCollection<Item>();
             ApplyAvailableItemsFilter();
+        }
+
+        private void SendEmailViaOutlook()
+        {
+            try
+            {
+                // Проверяем, что MainRichTextBox и его Document не null
+                if (MainRichTextBox == null || MainRichTextBox.Document == null)
+                {
+                    MessageBox.Show("Ошибка: текстовый редактор не инициализирован.", "Ошибка отправки", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Проверяем, есть ли содержимое в документе
+                if (MainRichTextBox.Document.Blocks.Count == 0)
+                {
+                    MessageBox.Show("Документ пуст. Нечего отправлять.", "Ошибка отправки", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Получаем данные поставщика
+                var supplier = LoadSupplierFromSettings();
+                if (string.IsNullOrEmpty(supplier.Email))
+                {
+                    MessageBox.Show("Email поставщика не указан в настройках.", "Ошибка отправки", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Сохраняем содержимое MainRichTextBox как временный RTF-файл
+                string tempRtfPath = Path.Combine(Path.GetTempPath(), $"Коммерческое_предложение_{DateTime.Now:yyyyMMdd_HHmmss}.rtf");
+                using (var fileStream = new FileStream(tempRtfPath, FileMode.Create))
+                {
+                    TextRange textRange = new TextRange(MainRichTextBox.Document.ContentStart, MainRichTextBox.Document.ContentEnd);
+                    textRange.Save(fileStream, DataFormats.Rtf);
+                }
+
+                // Создаем экземпляр Outlook
+                Outlook.Application outlookApp = new Outlook.Application();
+                Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+
+                // Настраиваем письмо
+                mailItem.To = SelectedCounterparty.Email;
+                mailItem.Subject = $"Коммерческое предложение от {supplier.Name} ({DateTime.Now:dd.MM.yyyy})";
+                mailItem.BodyFormat = Outlook.OlBodyFormat.olFormatRichText; // Используем RTF для тела письма
+                mailItem.Body = "Уважаемый(ая),\n\nВ приложении направляем коммерческое предложение.\n\nС уважением,\n" + supplier.Name;
+
+                // Добавляем RTF-файл как вложение
+                mailItem.Attachments.Add(tempRtfPath, Outlook.OlAttachmentType.olByValue, 1, "Коммерческое_предложение.rtf");
+
+                // Отображаем письмо в Outlook
+                mailItem.Display();
+
+                // Очищаем временный файл после отправки (Outlook копирует вложение)
+                File.Delete(tempRtfPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при создании письма в Outlook: {ex.Message}", "Ошибка отправки", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Print() 
+        {
+            try
+            {
+                // Проверяем, что RichTextBoxEditor и его Document не null
+                if (MainRichTextBox == null || MainRichTextBox.Document == null)
+                {
+                    MessageBox.Show("Ошибка: текстовый редактор не инициализирован или документ пуст.", "Ошибка печати", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Проверяем, есть ли содержимое в документе
+                if (MainRichTextBox.Document.Blocks.Count == 0)
+                {
+                    MessageBox.Show("Документ пуст. Нечего печатать.", "Ошибка печати", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Создаем PrintDialog
+                PrintDialog printDialog = new PrintDialog();
+
+                if (printDialog.ShowDialog() == true)
+                {
+                    // Настраиваем FlowDocument для печати
+                    FlowDocument document = MainRichTextBox.Document;
+                    document.PageWidth = 800; // A4 ширина в пунктах (примерно 210 мм)
+                    document.PageHeight = 1130; // A4 высота в пунктах (примерно 297 мм)
+                    document.PagePadding = new Thickness(50); // Поля страницы
+                    document.ColumnWidth = 700; // Ширина контента
+
+                    // Подготавливаем документ для печати
+                    DocumentPaginator paginator = ((IDocumentPaginatorSource)document).DocumentPaginator;
+
+                    // Печатаем документ
+                    printDialog.PrintDocument(paginator, "Печать коммерческого предложения");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при печати: {ex.Message}", "Ошибка печати", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public async Task GenerateAIProposalAsync()

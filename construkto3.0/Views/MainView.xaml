@@ -102,7 +102,7 @@
                     materialDesign:ButtonAssist.CornerRadius="10"
                     Width="60" Height="30"
                     Margin="10,0,70,0">
-                    <materialDesign:PackIcon Kind="Settings" Width="20" Height="20"/>
+                    <materialDesign:PackIcon Kind="Settings" Width="20" Height="20" Cursor=""/>
                 </Button>
                 <Button Grid.Column="1"
                     Click="Minimize_click"
@@ -310,13 +310,14 @@
                             CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
                             Style="{StaticResource AnimatedButton}"
                             materialDesign:ButtonAssist.CornerRadius="10"/>
-                    <Button Width="80" Margin="95,5,0,0"
+                    <Button Width="80" Margin="95,5,0,0" Command="{Binding PrintCommand}"
                             CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
                             Style="{StaticResource AnimatedButton}"
                             materialDesign:ButtonAssist.CornerRadius="10">
                             <materialDesign:PackIcon Kind="Printer" Width="30" Height="30"/>
                     </Button>
                     <Button Width="80" Margin="-15,-40,80,5"
+                            Command="{Binding SendEmailViaOutlookCommand}"
                             CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
                             Style="{StaticResource AnimatedButton}"
                             materialDesign:ButtonAssist.CornerRadius="10">
