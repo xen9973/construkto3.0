@@ -1,51 +1,78 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using construkto3._0.Models;
 using construkto3._0.Services;
+using construkto3._0.Views;
 
 
 namespace construkto3._0.ViewModels
 {
     public class AddCounterpartyViewModel : ViewModelBase
     {
-        public Counterparty NewCounterparty { get; set; } = new Counterparty();
-
-        public ICommand SaveCommand { get; }
-        public ICommand CancelCommand { get; }
-
-        public AddCounterpartyViewModel()
+        private ObservableCollection<Counterparty> _counterparties;
+        public ObservableCollection<Counterparty> Counterparties
         {
-            SaveCommand = new RelayCommand(OnSave);
-            CancelCommand = new RelayCommand(OnCancel);
+            get => _counterparties;
+            set => SetProperty(ref _counterparties, value);
         }
-
-        private void OnSave(object parameter)
+        private Counterparty _selectedCounterpartyItem;
+        public Counterparty SelectedCounterpartyItem
         {
-            // Проверки на пустоту
-            if (string.IsNullOrWhiteSpace(NewCounterparty.Name))
-            {
-                MessageBox.Show("Введите наименование контрагента.", "Ошибка",
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            try
-            {
-                DatabaseService.AddCounterparty(NewCounterparty);
-                MessageBox.Show("Контрагент успешно сохранён.", "Готово",
-                         MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при сохранении контрагента: {ex.Message}",
-                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            get => _selectedCounterpartyItem;
+            set => SetProperty(ref _selectedCounterpartyItem, value);
         }
-
-        private void OnCancel(object parameter)
+        private Counterparty _selectedCounterparty;
+        public Counterparty SelectedCounterparty
         {
-            if (parameter is Window wnd)
+            get => _selectedCounterparty;
+            set { _selectedCounterparty = value; OnPropertyChanged(nameof(SelectedCounterparty)); }
+        }
+        public ICommand AddCounterpartyCommand { get; }
+        public ICommand DeleteCounterpartyCommand { get; }
+        public ICommand UpdateCounterpartyCommand { get; }
+   
+        public ICommand SelectCounterpartyCommand { get; }
+        public AddCounterpartyViewModel() 
+        {
+            var allItems = DatabaseService.LoadItems() ?? new List<Item>();
+            Counterparties = new ObservableCollection<Counterparty>(DatabaseService.LoadCounterparties() ?? new List<Counterparty>());
+            AddCounterpartyCommand = new RelayCommand(_ => AddCounterparty());
+            DeleteCounterpartyCommand = new RelayCommand(_ => DeleteCounterparty(), _ => SelectedCounterpartyItem != null);
+            UpdateCounterpartyCommand = new RelayCommand(_ => UpdateCounterparty(), _ => SelectedCounterpartyItem != null);
+            SelectCounterpartyCommand = new RelayCommand(DoSelectCounterparty, _ => SelectedCounterpartyItem != null);
+        }
+        private void AddCounterparty()
+        {
+            var newCounterparty = new Counterparty { Name = "Новый контрагент", Address = "Адрес", Contact = "Контакт", Email = "Электронная почта" };
+            DatabaseService.AddCounterparty(newCounterparty);
+            Counterparties.Add(newCounterparty);
+        }
+        private void DoSelectCounterparty(object windowObj)
+        {
+            SelectedCounterparty = SelectedCounterpartyItem;
+            if (windowObj is Window wnd)
+            {
+                wnd.DialogResult = true;
                 wnd.Close();
+            }
+        }
+        private void DeleteCounterparty()
+        {
+            if (SelectedCounterpartyItem != null)
+            {
+                DatabaseService.DeleteCounterparty(SelectedCounterpartyItem.Id);
+                Counterparties.Remove(SelectedCounterpartyItem);
+            }
+        }
+
+        private void UpdateCounterparty()
+        {
+            if (SelectedCounterpartyItem != null)
+            {
+                DatabaseService.UpdateCounterparty(SelectedCounterpartyItem);
+            }
         }
     }
 }

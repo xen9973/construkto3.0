@@ -10,13 +10,6 @@ namespace construkto3._0.Views
         public AddCounterpartyView()
         {
             InitializeComponent();
-            SaveButton.Click += SaveButton_Click;
-
-        }
-
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

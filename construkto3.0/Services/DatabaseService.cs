@@ -81,7 +81,7 @@ namespace construkto3._0.Services
             using var conn = new SqlConnection(_connString);
             conn.Open();
             using var cmd = new SqlCommand(
-                "SELECT CounterpartyID, Name, Address, ContactInfo FROM dbo.Counterparties", conn);
+                "SELECT CounterpartyID, Name, Address, ContactInfo, Email FROM dbo.Counterparties", conn);
             using var rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
@@ -90,7 +90,8 @@ namespace construkto3._0.Services
                     Id = rdr.GetInt32(0),
                     Name = rdr.GetString(1),
                     Address = rdr.IsDBNull(2) ? null : rdr.GetString(2),
-                    Contact = rdr.IsDBNull(3) ? null : rdr.GetString(3)
+                    Contact = rdr.IsDBNull(3) ? null : rdr.GetString(3),
+                    Email = rdr.IsDBNull(4) ? null : rdr.GetString(4)
                 });
             }
             return list;
@@ -101,12 +102,13 @@ namespace construkto3._0.Services
             using var conn = new SqlConnection(_connString);
             conn.Open();
             using var cmd = new SqlCommand(@"
-                INSERT INTO dbo.Counterparties (Name, Address, ContactInfo)
-                VALUES (@Name, @Address, @ContactInfo);
+                INSERT INTO dbo.Counterparties (Name, Address, ContactInfo, Email)
+                VALUES (@Name, @Address, @ContactInfo, @Email);
                 SELECT CAST(SCOPE_IDENTITY() AS int);", conn);
             cmd.Parameters.AddWithValue("@Name", cp.Name);
             cmd.Parameters.AddWithValue("@Address", cp.Address ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@ContactInfo", cp.Contact ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Email", cp.Contact ?? (object)DBNull.Value);
 
             cp.Id = (int)cmd.ExecuteScalar();
         }
@@ -117,12 +119,13 @@ namespace construkto3._0.Services
             conn.Open();
             using var cmd = new SqlCommand(@"
                 UPDATE dbo.Counterparties
-                SET Name = @Name, Address = @Address, ContactInfo = @ContactInfo
+                SET Name = @Name, Address = @Address, ContactInfo = @ContactInfo, Email = @Email
                 WHERE CounterpartyID = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", cp.Id);
             cmd.Parameters.AddWithValue("@Name", cp.Name);
             cmd.Parameters.AddWithValue("@Address", cp.Address ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@ContactInfo", cp.Contact ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Email", cp.Contact ?? (object)DBNull.Value);
             cmd.ExecuteNonQuery();
         }
 

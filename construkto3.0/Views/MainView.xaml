@@ -292,23 +292,20 @@
             <!-- Панель управления -->
             <materialDesign:Card Grid.Column="3" Margin="10,0,10,0" Padding="15">
                 <StackPanel>
-                    <ComboBox ItemsSource="{Binding Counterparties}" 
-                              DisplayMemberPath="Name"
-                              SelectedItem="{Binding SelectedCounterparty}" 
-                              Style="{StaticResource MaterialDesignComboBox}"
-                              Foreground="{DynamicResource MaterialDesignBody}"
-                              Margin="0,0,0,10"
-                              materialDesign:HintAssist.Hint="Выберите контрагента"
-                              materialDesign:HintAssist.Foreground="{DynamicResource MaterialDesignBody}"/>
-                    <Button Content="Добавить контрагента" 
-                            Click="Button_Click"
+                    <TextBlock Grid.Column="1"
+                            VerticalAlignment="Top"
+                            Margin="10"
+                            FontSize="15"
+                            Text="{Binding SelectedCounterparty.Name, TargetNullValue='Контрагент не выбран', FallbackValue='Контрагент не выбран'}" />
+                    <Button Content="Выбрать контрагента" 
                             Style="{StaticResource AnimatedButton}"
+                            Command="{Binding OpenCounterpartyDialogCommand }"
                             materialDesign:ButtonAssist.CornerRadius="10"/>
                     <Button Content="Создать КП" 
                             Command="{Binding GenerateCommand}"
                             Style="{StaticResource AnimatedButton}"
                             materialDesign:ButtonAssist.CornerRadius="10"/>
-                    <Button Content="Сохранить в RTF" 
+                    <Button Content="Сохранить" 
                             Command="{Binding SaveCommand}" 
                             CommandParameter="{Binding ElementName=RichTextBoxEditor, Path=Document}" 
                             Style="{StaticResource AnimatedButton}"

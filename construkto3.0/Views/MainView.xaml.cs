@@ -85,11 +85,7 @@ namespace construkto3._0.Views
 
             RichTextBoxEditor.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, newFontWeight);
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            AddCounterpartyView addCounterpartyView = new AddCounterpartyView();
-            addCounterpartyView.Show();
-        }
+    
 
         private void ToggleTheme_Click(object sender, RoutedEventArgs e)
         {

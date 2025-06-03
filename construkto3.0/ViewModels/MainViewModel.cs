@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Net.Http;
+using construkto3._0.Views;
 
 namespace construkto3._0.ViewModels
 {
@@ -44,7 +45,20 @@ namespace construkto3._0.ViewModels
             get => _filteredAvailableItems;
             set => SetProperty(ref _filteredAvailableItems, value);
         }
-
+        private bool _isProposalCreated;
+        public bool IsProposalCreated
+        {
+            get => _isProposalCreated;
+            set
+            {
+                if (_isProposalCreated != value)
+                {
+                    _isProposalCreated = value;
+                    OnPropertyChanged(nameof(IsProposalCreated));
+                    (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                }
+            }
+        }
         public ObservableCollection<Item> SelectedItems { get; }
         public ObservableCollection<Counterparty> Counterparties { get; }
 
@@ -52,9 +66,8 @@ namespace construkto3._0.ViewModels
         public Counterparty SelectedCounterparty
         {
             get => _selectedCounterparty;
-            set => SetProperty(ref _selectedCounterparty, value);
+            set { _selectedCounterparty = value; OnPropertyChanged(nameof(SelectedCounterparty)); }
         }
-
         private Item _selectedAvailable;
         public Item SelectedAvailable
         {
@@ -135,6 +148,16 @@ namespace construkto3._0.ViewModels
         public ICommand RefreshDatabaseCommand { get; }
         public RichTextBox MainRichTextBox { get; set; }
         public ICommand GenerateAIProposalCommand { get; }
+        public ICommand OpenCounterpartyDialogCommand => new RelayCommand(_ =>
+        {
+            var dlg = new AddCounterpartyView();
+            if (dlg.ShowDialog() == true)
+            {
+                var vm = dlg.DataContext as AddCounterpartyViewModel;
+                if (vm?.SelectedCounterparty != null)
+                    this.SelectedCounterparty = vm.SelectedCounterparty;
+            }
+        });
 
         public MainViewModel()
         {
@@ -151,7 +174,7 @@ namespace construkto3._0.ViewModels
             GenerateCommand = new RelayCommand(_ => GenerateProposal(), _ => SelectedCounterparty != null && SelectedItems.Any());
             AddCommand = new RelayCommand(_ => AddSelectedItem(), _ => SelectedAvailable != null);
             RemoveCommand = new RelayCommand(_ => RemoveSelectedItem(), _ => SelectedChosen != null);
-            SaveCommand = new RelayCommand(_ => SaveToRtf(), _ => true);
+            SaveCommand = new RelayCommand(_ => SaveToRtf(), _ => IsProposalCreated);
             AddExcelCommand = new RelayCommand(_ => AddExcelData());
             UpdateExcelCommand = new RelayCommand(_ => UpdateExcelData());
             RefreshDatabaseCommand = new RelayCommand(_ => RefreshDatabase());
@@ -220,6 +243,7 @@ namespace construkto3._0.ViewModels
                     else
                         MainRichTextBox.Document.Blocks.Add(new Paragraph());
                 }
+                IsProposalCreated = true;
             }
         }
 
@@ -635,6 +659,7 @@ namespace construkto3._0.ViewModels
             // === 4. ПОКАЗАТЬ В RichTextBox ===
             if (MainRichTextBox != null)
                 MainRichTextBox.Document = flowDocument;
+            IsProposalCreated = true;
         }
     }
 }

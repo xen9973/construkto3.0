@@ -28,12 +28,6 @@ namespace construkto3._0.ViewModels
             set => SetProperty(ref _additionalItems, value);
         }
 
-        private ObservableCollection<Counterparty> _counterparties;
-        public ObservableCollection<Counterparty> Counterparties
-        {
-            get => _counterparties;
-            set => SetProperty(ref _counterparties, value);
-        }
 
         private Item _selectedGoodsItem;
         public Item SelectedGoodsItem
@@ -56,12 +50,6 @@ namespace construkto3._0.ViewModels
             set => SetProperty(ref _selectedAdditionalItem, value);
         }
 
-        private Counterparty _selectedCounterpartyItem;
-        public Counterparty SelectedCounterpartyItem
-        {
-            get => _selectedCounterpartyItem;
-            set => SetProperty(ref _selectedCounterpartyItem, value);
-        }
 
         public ICommand SaveGoodsCommand { get; }
         public ICommand DeleteGoodsCommand { get; }
@@ -72,9 +60,7 @@ namespace construkto3._0.ViewModels
         public ICommand SaveAdditionalCommand { get; }
         public ICommand DeleteAdditionalCommand { get; }
         public ICommand UpdateAdditionalCommand { get; }
-        public ICommand AddCounterpartyCommand { get; }
-        public ICommand DeleteCounterpartyCommand { get; }
-        public ICommand UpdateCounterpartyCommand { get; }
+ 
 
         public DatabaseViewModel()
         {
@@ -82,7 +68,6 @@ namespace construkto3._0.ViewModels
             GoodsItems = new ObservableCollection<Item>(allItems.Where(item => item.Category == "Товары"));
             ServicesItems = new ObservableCollection<Item>(allItems.Where(item => item.Category == "Услуги"));
             AdditionalItems = new ObservableCollection<Item>(allItems.Where(item => item.Category == "Доп. товары"));
-            Counterparties = new ObservableCollection<Counterparty>(DatabaseService.LoadCounterparties() ?? new List<Counterparty>());
 
             SaveGoodsCommand = new RelayCommand(_ => SaveGoods());
             DeleteGoodsCommand = new RelayCommand(_ => DeleteGoods(), _ => SelectedGoodsItem != null);
@@ -95,10 +80,6 @@ namespace construkto3._0.ViewModels
             SaveAdditionalCommand = new RelayCommand(_ => SaveAdditional());
             DeleteAdditionalCommand = new RelayCommand(_ => DeleteAdditional(), _ => SelectedAdditionalItem != null);
             UpdateAdditionalCommand = new RelayCommand(_ => UpdateAdditional(), _ => SelectedAdditionalItem != null);
-
-            AddCounterpartyCommand = new RelayCommand(_ => AddCounterparty());
-            DeleteCounterpartyCommand = new RelayCommand(_ => DeleteCounterparty(), _ => SelectedCounterpartyItem != null);
-            UpdateCounterpartyCommand = new RelayCommand(_ => UpdateCounterparty(), _ => SelectedCounterpartyItem != null);
         }
 
         private void SaveGoods()
@@ -171,30 +152,6 @@ namespace construkto3._0.ViewModels
             {
                 DatabaseService.UpdateItem(SelectedAdditionalItem);
             }
-        }
-
-        private void AddCounterparty()
-        {
-            var newCounterparty = new Counterparty { Name = "Новый контрагент", Address = "Адрес", Contact = "Контакт" };
-            DatabaseService.AddCounterparty(newCounterparty);
-            Counterparties.Add(newCounterparty);
-        }
-
-        private void DeleteCounterparty()
-        {
-            if (SelectedCounterpartyItem != null)
-            {
-                DatabaseService.DeleteCounterparty(SelectedCounterpartyItem.Id);
-                Counterparties.Remove(SelectedCounterpartyItem);
-            }
-        }
-
-        private void UpdateCounterparty()
-        {
-            if (SelectedCounterpartyItem != null)
-            {
-                DatabaseService.UpdateCounterparty(SelectedCounterpartyItem);
-            }
-        }
+        }      
     }
 }

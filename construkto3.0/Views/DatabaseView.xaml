@@ -242,50 +242,6 @@
                             </StackPanel>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Контрагенты">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <DataGrid Grid.Column="0"
-                                      ItemsSource="{Binding Counterparties}"
-                                      SelectedItem="{Binding SelectedCounterpartyItem}"
-                                      AutoGenerateColumns="False"
-                                      CanUserAddRows="False"
-                                      Style="{StaticResource ModernDataGrid}"
-                                      Width="720">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Название"
-                                                        Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="*"
-                                                        FontSize="14"/>
-                                    <DataGridTextColumn Header="Адрес"
-                                                        Binding="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="*"
-                                                        FontSize="14"/>
-                                    <DataGridTextColumn Header="Контактные данные"
-                                                        Binding="{Binding Contact, UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="*"
-                                                        FontSize="14"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Width="190" Margin="10,-550,0,0" Style="{StaticResource AnimatedButton}"
-                                        Command="{Binding AddCounterpartyCommand}">
-                                    <materialDesign:PackIcon Kind="UsersAdd" Width="20" Height="20"/>
-                                </Button>
-                                <Button Width="190" Margin="-190,-450,0,0" Style="{StaticResource AnimatedButton}"
-                                        Command="{Binding DeleteCounterpartyCommand}">
-                                    <materialDesign:PackIcon Kind="UserRemove" Width="20" Height="20"/>
-                                </Button>
-                                <Button Width="190" Margin="-190,-350,0,0" Style="{StaticResource AnimatedButton}"
-                                        Command="{Binding UpdateCounterpartyCommand}">
-                                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
-                                </Button>
-                            </StackPanel>
-                        </Grid>
-                    </TabItem>
                 </TabControl>
             </materialDesign:Card>
         </Grid>
