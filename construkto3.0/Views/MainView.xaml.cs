@@ -33,6 +33,7 @@ namespace construkto3._0.Views
                 vm.MainRichTextBox = this.RichTextBoxEditor;
             var g4fServer = new G4FServerManager();
             g4fServer.StartServerIfNotRunning();
+      
         }
 
         private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

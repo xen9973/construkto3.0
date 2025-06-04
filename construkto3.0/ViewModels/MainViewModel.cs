@@ -139,6 +139,28 @@ namespace construkto3._0.ViewModels
             }
         }
 
+        private ObservableCollection<double> _fontSizes;
+        public ObservableCollection<double> FontSizes
+        {
+            get => _fontSizes;
+            set => SetProperty(ref _fontSizes, value);
+        }
+
+        private double _selectedFontsize;
+        public double SelectedFontSize
+        {
+            get => _selectedFontsize;
+            set
+            {
+                if (_selectedFontsize != value)
+                {
+                    _selectedFontsize = value;
+                    OnPropertyChanged(nameof(SelectedFontSize));
+                    ApplyFontSize();
+                }
+            }
+        }
+
         private bool _isUpdatingCategories = false;
 
         public ICommand GenerateCommand { get; }
@@ -162,6 +184,7 @@ namespace construkto3._0.ViewModels
         });
         public ICommand PrintCommand { get; }
         public ICommand SendEmailViaOutlookCommand { get; }
+       
 
         public MainViewModel()
         {
@@ -185,6 +208,7 @@ namespace construkto3._0.ViewModels
             GenerateAIProposalCommand = new RelayCommand(async _ => await GenerateAIProposalAsync(), _ => SelectedCounterparty != null && SelectedItems.Any());
             PrintCommand = new RelayCommand(_ => Print(), _ => IsProposalCreated);
             SendEmailViaOutlookCommand = new RelayCommand(_ => SendEmailViaOutlook(), _ => IsProposalCreated && SelectedCounterparty != null && !string.IsNullOrEmpty(SelectedCounterparty.Email));
+        
 
             DatabaseItems = new ObservableCollection<Item>(DatabaseService.LoadItems() ?? new List<Item>());
             FilteredDatabaseItems = new ObservableCollection<Item>(DatabaseItems);
@@ -193,6 +217,29 @@ namespace construkto3._0.ViewModels
             AvailableItems = new ObservableCollection<Item>();
             FilteredAvailableItems = new ObservableCollection<Item>();
             ApplyAvailableItemsFilter();
+
+            FontSizes = new ObservableCollection<double> { 8,10,12,14,16,18,20,24,28,32,36,48,72};
+            _selectedFontsize = 14;
+        }
+
+      
+        private void ApplyFontSize()
+        {
+            if (MainRichTextBox == null || MainRichTextBox.Document == null) return;
+
+            TextRange textRange;
+            if (MainRichTextBox.Selection != null && !MainRichTextBox.Selection.IsEmpty)
+            {
+                textRange = MainRichTextBox.Selection;
+            }
+            else
+            {
+                textRange = new TextRange(MainRichTextBox.Document.ContentStart, MainRichTextBox.Document.ContentEnd);
+            }
+            if (!textRange.IsEmpty) 
+            {
+                textRange.ApplyPropertyValue(TextElement.FontSizeProperty, SelectedFontSize);
+            }
         }
 
         private void SendEmailViaOutlook()

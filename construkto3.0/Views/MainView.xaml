@@ -356,7 +356,9 @@
                     <!-- Панель инструментов для редактирования -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                         <!-- Выбор шрифта -->
-                        <ComboBox x:Name="fontsize"
+                        <ComboBox x:Name="FontSizeComboBox"
+                                   ItemsSource="{Binding FontSizes}"
+                                   SelectedItem="{Binding SelectedFontSize}"
                                    Width="100"
                                    Height="25"
                                    Margin="2,2,10,2"
